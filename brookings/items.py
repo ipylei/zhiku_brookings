@@ -50,12 +50,12 @@ class ExpertItem(scrapy.Item):
     languages = scrapy.Field()
 
 
-class ExternalItem(scrapy.Item):
-    status_code = scrapy.Field()
-    internal_url = scrapy.Field()
-    external_url = scrapy.Field()
-
-
 class ExpertContactItem(scrapy.Item):
     name = scrapy.Field()
     contact = scrapy.Field()
+
+
+class AbandonItem(scrapy.Item):
+    status_code = scrapy.Field()
+    internal_url = scrapy.Field()
+    external_url = scrapy.Field()

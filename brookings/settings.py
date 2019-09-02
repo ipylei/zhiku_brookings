@@ -9,8 +9,6 @@
 #     https://doc.scrapy.org/en/latest/topics/downloader-middleware.html
 #     https://doc.scrapy.org/en/latest/topics/spider-middleware.html
 
-USER_AGENT = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/76.0.3809.87 Safari/537.36'
-# DEFAULT_REQUEST_HEADERS = {}
 
 BOT_NAME = 'brookings'
 
@@ -91,16 +89,30 @@ ITEM_PIPELINES = {
 # HTTPCACHE_IGNORE_HTTP_CODES = []
 # HTTPCACHE_STORAGE = 'scrapy.extensions.httpcache.FilesystemCacheStorage'
 
+
+USER_AGENT = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/76.0.3809.87 Safari/537.36'
+# DEFAULT_REQUEST_HEADERS = {}
+
+FEED_EXPORT_ENCODING = 'utf-8'
+
 # REDIRECT_ENABLED = False # 禁止重定向
 # HTTPERROR_ALLOWED_CODES = [301, 302]
-FEED_EXPORT_ENCODING = 'utf-8'
 
 # 数据库配置
 MYSQL_HOST = '127.0.0.1'
 MYSQL_DATABASE = 'zhiku'
 MYSQL_PORT = 3306
-MYSQL_USER = 'root'
+MYSQL_USERNAME = 'root'
 MYSQL_PASSWORD = '123456'
+
+# RabbiMQ配置
+# MQ_HOST = '10.4.7.44'
+MQ_HOST = '127.0.0.1'
+MQ_USERNAME = 'guest'
+MQ_PASSWORD = 'guest'
+MQ_PORT = 5672
+MQ_QUEUE = 'zk_file_task_queue'
+MQ_SWITCH = True  # 是否推入MQ
 
 BASIC_URL = 'https://www.brookings.edu/search/?s={}'
 # 翻页页数

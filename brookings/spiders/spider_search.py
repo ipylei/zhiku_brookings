@@ -9,7 +9,7 @@ from scrapy.linkextractors import LinkExtractor
 
 from brookings.settings import BASIC_URL, PAGE_COUNT
 from brookings.config import parsing_rules
-from brookings.items import SearchItem, ExpertItem, ExternalItem, ExpertContactItem
+from brookings.items import SearchItem, ExpertItem, AbandonItem, ExpertContactItem
 
 
 class SearchSpider(scrapy.Spider):
@@ -251,7 +251,7 @@ class SearchSpider(scrapy.Spider):
             else:
                 external_url = ''
             data = {"status_code": response.status, "internal_url": response.url, "external_url": external_url}
-            item = ExternalItem(**data)
+            item = AbandonItem(**data)
             yield item
         else:
             category = re.search('.*?brookings.edu/(.*?)/\S+', response.url)
@@ -276,5 +276,5 @@ class SearchSpider(scrapy.Spider):
                     else:
                         external_url = ''
                     data = {"status_code": response.status, "internal_url": response.url, "external_url": external_url}
-                    item = ExternalItem(**data)
+                    item = AbandonItem(**data)
                     yield item
