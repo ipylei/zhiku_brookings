@@ -115,9 +115,9 @@ class ExpertSpider(scrapy.Spider):
             "current_positions": current_positions,
             "past_positions": past_positions,
             "languages": languages,
+            "category": category,
+            "url": response.url,
         }
-        data['category'] = category
-        data['url'] = response.url
         return data
 
     def parse_expert(self, response):

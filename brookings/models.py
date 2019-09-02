@@ -67,7 +67,7 @@ class ExpertsSeed(Base):
     relevant = Column(Text, default='', comment='相关计划')  # 含多个
 
     pdf_file = Column(Text, default='', comment='附件路径')  # 含多个
-    url = Column(String(500), nullable=False, comment='url')
+    url = Column(String(500), unique=True, nullable=False, comment='url')
     category = Column(String(500), default='', comment='栏目')
 
     topics = Column(String(500), default='', comment='话题')  # 含多个
@@ -83,6 +83,17 @@ class ExpertsSeed(Base):
         Session.commit()
 
 
+class ExpertContactSeed(Base):
+    __tablename__ = 'brookings_experts_contact'  # 表名
+    id = Column(Integer, primary_key=True)
+    name = Column(String(255), unique=True, nullable=False, comment='姓名')
+    contact = Column(String(500), default='', comment='联系方式')  # 含多个
+
+    def save(self):
+        Session.add(self)
+        Session.commit()
+
+
 class ExternalSeed(Base):
     """站外链接"""
     __tablename__ = 'brookings_external'  # 表名
@@ -91,17 +102,6 @@ class ExternalSeed(Base):
     status_code = Column(Integer, comment='访问站内连接或站外连接时状态码')
     internal_url = Column(String(500), unique=True, comment='站内链接')
     external_url = Column(String(500), unique=True, comment='对应的站外链接')
-
-    def save(self):
-        Session.add(self)
-        Session.commit()
-
-
-class ExpertContactSeed(Base):
-    __tablename__ = 'brookings_experts_contact'  # 表名
-    id = Column(Integer, primary_key=True)
-    name = Column(String(255), unique=True, nullable=False, comment='姓名')
-    contact = Column(String(500), default='', comment='联系方式')  # 含多个
 
     def save(self):
         Session.add(self)

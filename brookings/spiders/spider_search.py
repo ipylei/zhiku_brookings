@@ -24,10 +24,10 @@ class SearchSpider(scrapy.Spider):
     def start_requests(self):
         # search_words = 'news'
         # BASIC_URL = 'https://www.brookings.edu/search/?s={}'
-        # search_words = 'events'
-        # start_url = BASIC_URL.format(search_words)
+        search_words = 'events'
+        start_url = BASIC_URL.format(search_words)
 
-        start_url = "https://www.brookings.edu/search/?s=&post_type=essay&topic=&pcp=&date_range=&start_date=&end_date="
+        # start_url = "https://www.brookings.edu/search/?s=&post_type=essay&topic=&pcp=&date_range=&start_date=&end_date="
         yield scrapy.Request(url=start_url)
 
     def parse(self, response):
@@ -238,9 +238,9 @@ class SearchSpider(scrapy.Spider):
             "current_positions": current_positions,
             "past_positions": past_positions,
             "languages": languages,
+            "category": category,
+            "url": response.url
         }
-        data['category'] = category
-        data['url'] = response.url
         return data
 
     def parse_detail(self, response):
