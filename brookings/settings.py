@@ -91,7 +91,8 @@ ITEM_PIPELINES = {
 # HTTPCACHE_IGNORE_HTTP_CODES = []
 # HTTPCACHE_STORAGE = 'scrapy.extensions.httpcache.FilesystemCacheStorage'
 
-
+# REDIRECT_ENABLED = False # 禁止重定向
+# HTTPERROR_ALLOWED_CODES = [301, 302]
 FEED_EXPORT_ENCODING = 'utf-8'
 
 # 数据库配置

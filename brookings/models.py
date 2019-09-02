@@ -61,7 +61,7 @@ class ExpertsSeed(Base):
     job = Column(String(500), default='', comment='职务')  # 含多个
     education = Column(Text, default='', comment='学历')  # 含多个
 
-    contact = Column(String(500), default='', comment='联系方式')  # 含多个
+    # contact = Column(String(500), default='', comment='联系方式')  # 含多个
     reward = Column(Text, default='', comment='获奖')  # 含多个
     active_media = Column(String(500), default='', comment='活跃的媒体')  # 含多个
     relevant = Column(Text, default='', comment='相关计划')  # 含多个
@@ -77,6 +77,31 @@ class ExpertsSeed(Base):
     current_positions = Column(Text, default='', comment='目前的职位')  # 含多个
     past_positions = Column(Text, default='', comment='过去的职位')  # 含多个
     languages = Column(String(500), default='', comment='语言')  # 含多个
+
+    def save(self):
+        Session.add(self)
+        Session.commit()
+
+
+class ExternalSeed(Base):
+    """站外链接"""
+    __tablename__ = 'brookings_external'  # 表名
+    id = Column(Integer, primary_key=True)
+
+    status_code = Column(Integer, comment='访问站内连接或站外连接时状态码')
+    internal_url = Column(String(500), unique=True, comment='站内链接')
+    external_url = Column(String(500), unique=True, comment='对应的站外链接')
+
+    def save(self):
+        Session.add(self)
+        Session.commit()
+
+
+class ExpertContactSeed(Base):
+    __tablename__ = 'brookings_experts_contact'  # 表名
+    id = Column(Integer, primary_key=True)
+    name = Column(String(255), unique=True, nullable=False, comment='姓名')
+    contact = Column(String(500), default='', comment='联系方式')  # 含多个
 
     def save(self):
         Session.add(self)

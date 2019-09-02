@@ -8,8 +8,8 @@
 
 from scrapy.exceptions import DropItem
 
-from brookings.items import SearchItem, ExpertItem
-from brookings.models import Session, SearchSeed, ExpertsSeed
+from brookings.items import SearchItem, ExpertItem, ExternalItem, ExpertContactItem
+from brookings.models import Session, SearchSeed, ExpertsSeed, ExternalSeed, ExpertContactSeed
 
 
 class BrookingsPipeline(object):
@@ -21,6 +21,12 @@ class BrookingsPipeline(object):
                 obj.save()
             elif isinstance(item, ExpertItem):
                 obj = ExpertsSeed(**data)
+                obj.save()
+            elif isinstance(item, ExternalItem):
+                obj = ExternalSeed(**data)
+                obj.save()
+            elif isinstance(item, ExpertContactItem):
+                obj = ExpertContactSeed(**data)
                 obj.save()
         except Exception as e:
             Session.rollback()

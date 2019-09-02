@@ -32,7 +32,7 @@ class ExpertItem(scrapy.Item):
     brief_introd = scrapy.Field()  # 简介
     job = scrapy.Field()  # 职务
     education = scrapy.Field()  # 学历
-    contact = scrapy.Field()  # 联系方式
+    # contact = scrapy.Field()  # 联系方式
     reward = scrapy.Field()  # 获奖
     active_media = scrapy.Field()  # 活跃的媒体
     relevant = scrapy.Field()  # 相关计划
@@ -48,3 +48,14 @@ class ExpertItem(scrapy.Item):
     current_positions = scrapy.Field()
     past_positions = scrapy.Field()
     languages = scrapy.Field()
+
+
+class ExternalItem(scrapy.Item):
+    status_code = scrapy.Field()
+    internal_url = scrapy.Field()
+    external_url = scrapy.Field()
+
+
+class ExpertContactItem(scrapy.Item):
+    name = scrapy.Field()
+    contact = scrapy.Field()

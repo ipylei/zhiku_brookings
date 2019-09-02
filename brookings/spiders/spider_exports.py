@@ -6,7 +6,7 @@ import scrapy
 from scrapy.http import HtmlResponse
 
 from brookings.config import parsing_rules
-from brookings.items import ExpertItem
+from brookings.items import ExpertItem, ExpertContactItem
 
 
 class ExpertSpider(scrapy.Spider):
@@ -45,6 +45,7 @@ class ExpertSpider(scrapy.Spider):
         contact = response.xpath(parsing_rule_dict.get("contact")).extract()
         contact = ';'.join(contact)
         contact = contact.replace('#;', '')
+        contact = contact.replace('#', '')
         pdf_urls = response.xpath(parsing_rule_dict.get("pdf_file")).extract()
         pdf_file_dict = {'附件': []}
         for i in range(len(pdf_urls)):
@@ -104,7 +105,7 @@ class ExpertSpider(scrapy.Spider):
             "brief_introd": brief_introd,
             "job": job,
             "research_field": research_field,
-            "education ": education,
+            "education": education,
             "contact": contact,
             "pdf_file": pdf_file,
             "topics": topics,
@@ -115,7 +116,7 @@ class ExpertSpider(scrapy.Spider):
             "past_positions": past_positions,
             "languages": languages,
         }
-        data[category] = category
+        data['category'] = category
         data['url'] = response.url
         return data
 
@@ -126,5 +127,8 @@ class ExpertSpider(scrapy.Spider):
             if category == "experts":
                 parsing_rule_dict = parsing_rules.get(category)
                 data = self._get_experts_data(category, parsing_rule_dict, response)
+                data2 = {"name": data.get("name"), "contact": data.pop("contact")}
                 item = ExpertItem(**data)
+                item2 = ExpertContactItem(**data2)
                 yield item
+                yield item2

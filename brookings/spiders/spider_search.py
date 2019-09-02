@@ -9,19 +9,16 @@ from scrapy.linkextractors import LinkExtractor
 
 from brookings.settings import BASIC_URL, PAGE_COUNT
 from brookings.config import parsing_rules
-from brookings.items import SearchItem, ExpertItem
+from brookings.items import SearchItem, ExpertItem, ExternalItem, ExpertContactItem
 
 
 class SearchSpider(scrapy.Spider):
     name = 'search_spider'
-    allowed_domains = ['brookings.edu']
-    page_count = 1
+    # allowed_domains = ['brookings.edu']
+    page_count = 0
     item_xpath_list = [
         "//div[@class='list-content']/article//a[@class='event-content']",  # events
         "//div[@class='list-content']/article//h4[@class='title']/a",
-    ]
-    next_xpath_list = [
-        "//a[@class='load-more']",  # [events,news]
     ]
 
     def start_requests(self):
@@ -38,21 +35,20 @@ class SearchSpider(scrapy.Spider):
         :param response:
         :return:
         """
-        "//div[@class='list-content']/article//div[@class='article-info']/a[@class='label']/text()"
+        self.page_count += 1
         if self.page_count <= PAGE_COUNT:
             # 提取详情url
             item_le = LinkExtractor(restrict_xpaths=self.item_xpath_list)
             item_links = item_le.extract_links(response)
             if item_links:
                 for link in item_links:
-                    yield scrapy.Request(url=link.url, callback=self.parse_detail)
+                    yield scrapy.Request(url=link.url, callback=self.parse_detail,
+                                         meta={'dont_redirect': False, 'handle_httpstatus_list': [302]})
+                    # yield scrapy.Request(url=link.url, callback=self.parse_detail)
             # 提取出下一页url
-            next_le = LinkExtractor(restrict_xpaths=self.next_xpath_list)
-            next_pages = next_le.extract_links(response)
-            if next_pages:
-                for next_page in next_pages:
-                    yield scrapy.Request(url=next_page.url)
-            self.page_count += 1
+            next_url = response.xpath("//a[@class='load-more']/@href").extract_first()
+            if next_url:
+                yield scrapy.Request(url=next_url)
 
     def _parse_category1(self, parsing_rule_dict, response):
         """ 解析 essay
@@ -74,14 +70,16 @@ class SearchSpider(scrapy.Spider):
         else:
             publish_time = None
         content = response.xpath(parsing_rule_dict.get("content")).extract_first()
-        # 替换字符串(末尾)
-        content = content.replace('<section class="author">', '￥')
-        content = re.search('[\s\S]+<section class="info">[\s\S]+</section>([\s\S]+)￥?', content)
         if content:
-            content = ''.join(content.group(1))
+            # 替换字符串(末尾)
+            content = content.replace('<section class="author">', '￥')
+            content = re.search('[\s\S]+<section class="info">[\s\S]+</section>([\s\S]+)￥?', content)
+            if content:
+                content = ''.join(content.group(1))
+            else:
+                content = None
         else:
             content = None
-
         data = {
             "title": title,
             "description": description,
@@ -124,7 +122,7 @@ class SearchSpider(scrapy.Spider):
         pdf_file = json.dumps(pdf_file_dict, ensure_ascii=False)
         data = {
             "title": title,
-            "published_time": publish_time,
+            "publish_time": publish_time,
             "content": content,
             "description": description,
             "topic": topic,
@@ -145,7 +143,7 @@ class SearchSpider(scrapy.Spider):
             data = self._parse_category1(parsing_rule_dict, response)
         else:
             data = self._parse_category2(parsing_rule_dict, response)
-        data[category] = category
+        data['category'] = category
         data['url'] = response.url
         return data
 
@@ -168,6 +166,7 @@ class SearchSpider(scrapy.Spider):
         education = ';'.join(education)
         contact = response.xpath(parsing_rule_dict.get("contact")).extract()
         contact = ';'.join(contact)
+        contact = contact.replace('#;', '')
         contact = contact.replace('#', '')
         pdf_urls = response.xpath(parsing_rule_dict.get("pdf_file")).extract()
         pdf_file_dict = {'附件': []}
@@ -229,7 +228,7 @@ class SearchSpider(scrapy.Spider):
             "brief_introd": brief_introd,
             "job": job,
             "research_field": research_field,
-            "education ": education,
+            "education": education,
             "contact": contact,
             "pdf_file": pdf_file,
             "topics": topics,
@@ -240,20 +239,42 @@ class SearchSpider(scrapy.Spider):
             "past_positions": past_positions,
             "languages": languages,
         }
-        data[category] = category
+        data['category'] = category
         data['url'] = response.url
         return data
 
     def parse_detail(self, response):
-        category = re.search('.*?brookings.edu/(.*?)/\S+', response.url)
-        if category:
-            category = category.group(1)
-            parsing_rule_dict = parsing_rules.get(category)
-            if category in parsing_rules and category != "experts":  # 非专家
-                data = self._get_item_data(category, parsing_rule_dict, response)
-                item = SearchItem(**data)
-                yield item
-            elif category in parsing_rules and category == "experts":  # 专家
-                data = self._get_experts_data(category, parsing_rule_dict, response)
-                item = ExpertItem(**data)
-                yield item
+        if response.status == 302:
+            external_url = response.headers.get("Location")
+            if external_url:
+                external_url = external_url.decode()
+            else:
+                external_url = ''
+            data = {"status_code": response.status, "internal_url": response.url, "external_url": external_url}
+            item = ExternalItem(**data)
+            yield item
+        else:
+            category = re.search('.*?brookings.edu/(.*?)/\S+', response.url)
+            if category:
+                category = category.group(1)
+                parsing_rule_dict = parsing_rules.get(category)
+                if category in parsing_rules and category != "experts":  # 非专家
+                    data = self._get_item_data(category, parsing_rule_dict, response)
+                    item = SearchItem(**data)
+                    yield item
+                elif category in parsing_rules and category == "experts":  # 专家
+                    data = self._get_experts_data(category, parsing_rule_dict, response)
+                    data2 = {"name": data.get("name"), "contact": data.pop("contact")}
+                    item = ExpertItem(**data)
+                    item2 = ExpertContactItem(**data2)
+                    yield item
+                    yield item2
+                else:
+                    external_url = response.headers.get("Location")
+                    if external_url:
+                        external_url = external_url.decode()
+                    else:
+                        external_url = ''
+                    data = {"status_code": response.status, "internal_url": response.url, "external_url": external_url}
+                    item = ExternalItem(**data)
+                    yield item
