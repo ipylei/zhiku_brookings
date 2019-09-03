@@ -77,6 +77,7 @@ class ExpertsSeed(Base):
     current_positions = Column(Text, default='', comment='目前的职位')  # 含多个
     past_positions = Column(Text, default='', comment='过去的职位')  # 含多个
     languages = Column(String(500), default='', comment='语言')  # 含多个
+    research_team = Column(String(500), default='', comment='研究团队')  # 含多个
 
     def save(self):
         Session.add(self)
@@ -100,8 +101,8 @@ class AbandonSeed(Base):
     id = Column(Integer, primary_key=True)
 
     status_code = Column(Integer, comment='访问站内连接或站外连接时状态码')
-    internal_url = Column(String(500), unique=True, comment='站内链接')
-    external_url = Column(String(500), unique=True, comment='对应的站外链接')
+    internal_url = Column(String(500), unique=True, default='', comment='遗弃的链接')
+    external_url = Column(String(500), unique=True, default='', comment='重定向后的链接')
 
     def save(self):
         Session.add(self)

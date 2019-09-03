@@ -3,13 +3,12 @@ import json
 import re
 
 import scrapy
-from scrapy.http import HtmlResponse
 
 from brookings.config import parsing_rules
-from brookings.items import ExpertItem, ExpertContactItem
+from brookings.items import ExpertItem, ExpertContactItem, AbandonItem
 
 
-class ExpertSpider(scrapy.Spider):
+class ExpertsSpider(scrapy.Spider):
     name = 'expert_spider'
     allowed_domains = ['brookings.edu']
     start_urls = ['https://www.brookings.edu/experts/']
@@ -53,47 +52,46 @@ class ExpertSpider(scrapy.Spider):
             annex_dict['附件{}'.format(i + 1)] = pdf_urls[i]
             pdf_file_dict['附件'].append(annex_dict)
         pdf_file = json.dumps(pdf_file_dict, ensure_ascii=False)
-        expert_grid = response.xpath(parsing_rule_dict.get("expert-grid")).extract_first()
-        expert_response = HtmlResponse(url=response.url, body=expert_grid, encoding='utf8')
+        expert_grid = response.xpath(parsing_rule_dict.get("expert-grid"))
         try:
-            topics_string = expert_response.xpath('//dl').re_first('<dt>[\s\S]*?Topics[\s\S]*?</dt>([\s\S]*?)<dt>')
+            topics_string = expert_grid.xpath('//dl').re_first('<dt>[\s\S]*?Topics[\s\S]*?</dt>([\s\S]*?)<dt>')
             topics = ';'.join(re.findall('<dd><.*?>([\s\S]*?)<.*?></dd>', topics_string, re.S))
         except:
             topics = ''
         try:
-            centers_string = expert_response.xpath('//dl').re_first('<dt>[\s\S]*?Centers[\s\S]*?</dt>([\s\S]*?)<dt>')
+            centers_string = expert_grid.xpath('//dl').re_first('<dt>[\s\S]*?Centers[\s\S]*?</dt>([\s\S]*?)<dt>')
             centers = ';'.join(re.findall('<dd><.*?>([\s\S]*?)<.*?></dd>', centers_string, re.S))
         except:
             centers = ''
         try:
-            projects_string = expert_response.xpath('//dl').re_first('<dt>[\s\S]*?Projects[\s\S]*?</dt>([\s\S]*?)<dt>')
+            projects_string = expert_grid.xpath('//dl').re_first('<dt>[\s\S]*?Projects[\s\S]*?</dt>([\s\S]*?)<dt>')
             projects = ';'.join(
                 re.findall('<dd><.*?>([\s\S]*?)<.*?></dd>', projects_string, re.S)) if projects_string else ''
         except:
             projects = ''
         try:
-            addition_areas_string = expert_response.xpath('//dl').re_first(
+            addition_areas_string = expert_grid.xpath('//dl').re_first(
                 '<dt>[\s\S]*?Additional Expertise Areas[\s\S]*?</dt>([\s\S]*?)<dt>')
             addition_areas = ';'.join(
                 re.findall('<dd>([\s\S]*?)</dd>', addition_areas_string, re.S)) if addition_areas_string else ''
         except:
             addition_areas = ''
         try:
-            current_positions_string = expert_response.xpath('//dl').re_first(
+            current_positions_string = expert_grid.xpath('//dl').re_first(
                 '<dt>[\s\S]*?Current Positions[\s\S]*?</dt>([\s\S]*?)<dt>')
             current_positions = ';'.join(
                 re.findall('<dd>([\s\S]*?)</dd>', current_positions_string, re.S)) if current_positions_string else ''
         except:
             current_positions = ''
         try:
-            past_positions_string = expert_response.xpath('//dl').re_first(
+            past_positions_string = expert_grid.xpath('//dl').re_first(
                 '<dt>[\s\S]*?Past Positions[\s\S]*?</dt>([\s\S]*?)<dt>')
             past_positions = ';'.join(
                 re.findall('<dd>([\s\S]*?)</dd>', past_positions_string, re.S)) if past_positions_string else ''
         except:
             past_positions = ''
         try:
-            languages_string = expert_response.xpath('//dl').re_first(
+            languages_string = expert_grid.xpath('//dl').re_first(
                 '<dt>[\s\S]*?Language Fluency[\s\S]*?</dt>([\s\S]*?)<dt>')
             languages = ';'.join(re.findall('<dd>([\s\S]*?)</dd>', languages_string, re.S))
         except:
@@ -124,7 +122,7 @@ class ExpertSpider(scrapy.Spider):
         elif last_dt_field == 'Language Fluency':
             last_dt_field = "languages"
         else:
-            last_dt_field = ''
+            last_dt_field = None
 
         data = {
             "name": name,
@@ -151,6 +149,9 @@ class ExpertSpider(scrapy.Spider):
         return data
 
     def parse_expert(self, response):
+        external_url = response.headers.get("Location")
+        if external_url:
+            external_url = external_url.decode()
         category = re.search('.*?brookings.edu/(.*?)/\S+', response.url)
         if category:
             category = category.group(1)
@@ -162,3 +163,11 @@ class ExpertSpider(scrapy.Spider):
                 item2 = ExpertContactItem(**data2)
                 yield item
                 yield item2
+            else:
+                data = {"status_code": response.status, "internal_url": response.url, "external_url": external_url}
+                item = AbandonItem(**data)
+                yield item
+        else:
+            data = {"status_code": response.status, "internal_url": response.url, "external_url": external_url}
+            item = AbandonItem(**data)
+            yield item

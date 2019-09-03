@@ -42,44 +42,43 @@ class BrookingsPipeline(object):
             "ResourceType": resource_type,
             "ResourceUrl": resource_urls
         }
-        return json.dumps(data)
+        return json.dumps(data, ensure_ascii=False)
 
     def process_item(self, item, spider):
-        data = dict(item)
         try:
             if isinstance(item, SearchItem):
-                obj = SearchSeed(**data)
+                obj = SearchSeed(**item)
                 obj.save()
             elif isinstance(item, ExpertItem):
-                obj = ExpertsSeed(**data)
+                obj = ExpertsSeed(**item)
                 obj.save()
             elif isinstance(item, ExpertContactItem):
-                obj = ExpertContactSeed(**data)
+                obj = ExpertContactSeed(**item)
                 obj.save()
             elif isinstance(item, AbandonItem):
-                obj = AbandonSeed(**data)
+                obj = AbandonSeed(**item)
                 obj.save()
 
             if self.switch:
                 website = '布鲁金斯学会'
-                url = data.get('url')
-                pdf_file = data.get('pdf_file')
+                url = item.get('url')
+                pdf_file = item.get('pdf_file')
                 resource_urls = json.loads(pdf_file).get("附件")
                 if resource_urls:
                     body = self.packaged_data(website=website, url=url, resource_urls=resource_urls)
-                    self.channel.basic_publish(exchange='', routing_key='zk_file_task_queue', body=body)
+                    self.channel.basic_publish(exchange='', routing_key=self.queue, body=body)
             return item
         except Exception as e:
             Session.rollback()
             raise DropItem(e)
 
     def open_spider(self, spider):
-        self.connection = pika.BlockingConnection(
-            pika.ConnectionParameters(host=self.host,
-                                      port=self.port,
-                                      credentials=pika.PlainCredentials(self.username, self.password),
-                                      heartbeat=0
-                                      ))
+        self.connection = pika.BlockingConnection(pika.ConnectionParameters(host=self.host,
+                                                                            port=self.port,
+                                                                            credentials=pika.PlainCredentials(
+                                                                                self.username, self.password),
+                                                                            heartbeat=0
+                                                                            ))
         self.channel = self.connection.channel()
         # self.channel.queue_declare(queue=self.queue)
 

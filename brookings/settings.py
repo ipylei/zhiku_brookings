@@ -114,6 +114,5 @@ MQ_PORT = 5672
 MQ_QUEUE = 'zk_file_task_queue'
 MQ_SWITCH = False  # 是否推入MQ
 
-BASIC_URL = 'https://www.brookings.edu/search/?s={}'
 # 翻页页数
 PAGE_COUNT = 10

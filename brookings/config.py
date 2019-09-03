@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-import copy
 
 parsing_rule_experts = {
     "expert-grid": "//div[@class='expert-grid']",

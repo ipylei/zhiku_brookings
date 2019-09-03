@@ -4,10 +4,9 @@ import re
 import datetime
 
 import scrapy
-from scrapy.http import HtmlResponse
 from scrapy.linkextractors import LinkExtractor
 
-from brookings.settings import BASIC_URL, PAGE_COUNT
+from brookings.settings import PAGE_COUNT
 from brookings.config import parsing_rules
 from brookings.items import SearchItem, ExpertItem, AbandonItem, ExpertContactItem
 
@@ -16,18 +15,15 @@ class SearchSpider(scrapy.Spider):
     name = 'search_spider'
     # allowed_domains = ['brookings.edu']
     page_count = 0
+    basic_url = 'https://www.brookings.edu/search/?s={}'
     item_xpath_list = [
         "//div[@class='list-content']/article//a[@class='event-content']",  # events
-        "//div[@class='list-content']/article//h4[@class='title']/a",
-    ]
+        "//div[@class='list-content']/article//h4[@class='title']/a", ]
 
     def start_requests(self):
-        # search_words = 'news'
-        # BASIC_URL = 'https://www.brookings.edu/search/?s={}'
-        # search_words = 'events'
-        # start_url = BASIC_URL.format(search_words)
-
-        start_url = "https://www.brookings.edu/search/?s=&post_type=essay&topic=&pcp=&date_range=&start_date=&end_date="
+        search_words = 'events'
+        start_url = self.basic_url.format(search_words)
+        # start_url = "https://www.brookings.edu/search/?s=&post_type=essay&topic=&pcp=&date_range=&start_date=&end_date="
         yield scrapy.Request(url=start_url)
 
     def parse(self, response):
@@ -176,25 +172,24 @@ class SearchSpider(scrapy.Spider):
             pdf_file_dict['附件'].append(annex_dict)
         pdf_file = json.dumps(pdf_file_dict, ensure_ascii=False)
         expert_grid = response.xpath(parsing_rule_dict.get("expert-grid")).extract_first()
-        expert_response = HtmlResponse(url=response.url, body=expert_grid, encoding='utf8')
         try:
-            topics_string = expert_response.xpath('//dl').re_first('<dt>[\s\S]*?Topics[\s\S]*?</dt>([\s\S]*?)<dt>')
+            topics_string = expert_grid.xpath('//dl').re_first('<dt>[\s\S]*?Topics[\s\S]*?</dt>([\s\S]*?)<dt>')
             topics = ';'.join(re.findall('<dd><.*?>([\s\S]*?)<.*?></dd>', topics_string, re.S))
         except:
             topics = ''
         try:
-            centers_string = expert_response.xpath('//dl').re_first('<dt>[\s\S]*?Centers[\s\S]*?</dt>([\s\S]*?)<dt>')
+            centers_string = expert_grid.xpath('//dl').re_first('<dt>[\s\S]*?Centers[\s\S]*?</dt>([\s\S]*?)<dt>')
             centers = ';'.join(re.findall('<dd><.*?>([\s\S]*?)<.*?></dd>', centers_string, re.S))
         except:
             centers = ''
         try:
-            projects_string = expert_response.xpath('//dl').re_first('<dt>[\s\S]*?Projects[\s\S]*?</dt>([\s\S]*?)<dt>')
+            projects_string = expert_grid.xpath('//dl').re_first('<dt>[\s\S]*?Projects[\s\S]*?</dt>([\s\S]*?)<dt>')
             projects = ';'.join(
                 re.findall('<dd><.*?>([\s\S]*?)<.*?></dd>', projects_string, re.S)) if projects_string else ''
         except:
             projects = ''
         try:
-            addition_areas_string = expert_response.xpath('//dl').re_first(
+            addition_areas_string = expert_grid.xpath('//dl').re_first(
                 '<dt>[\s\S]*?Additional Expertise Areas[\s\S]*?</dt>([\s\S]*?)<dt>')
             addition_areas = ';'.join(
                 re.findall('<dd>([\s\S]*?)</dd>', addition_areas_string, re.S)) if addition_areas_string else ''
@@ -202,21 +197,21 @@ class SearchSpider(scrapy.Spider):
             addition_areas = ''
 
         try:
-            current_positions_string = expert_response.xpath('//dl').re_first(
+            current_positions_string = expert_grid.xpath('//dl').re_first(
                 '<dt>[\s\S]*?Current Positions[\s\S]*?</dt>([\s\S]*?)<dt>')
             current_positions = ';'.join(
                 re.findall('<dd>([\s\S]*?)</dd>', current_positions_string, re.S)) if current_positions_string else ''
         except:
             current_positions = ''
         try:
-            past_positions_string = expert_response.xpath('//dl').re_first(
+            past_positions_string = expert_grid.xpath('//dl').re_first(
                 '<dt>[\s\S]*?Past Positions[\s\S]*?</dt>([\s\S]*?)<dt>')
             past_positions = ';'.join(
                 re.findall('<dd>([\s\S]*?)</dd>', past_positions_string, re.S)) if past_positions_string else ''
         except:
             past_positions = ''
         try:
-            languages_string = expert_response.xpath('//dl').re_first(
+            languages_string = expert_grid.xpath('//dl').re_first(
                 '<dt>[\s\S]*?Language Fluency[\s\S]*?</dt>([\s\S]*?)<dt>')
             languages = ';'.join(re.findall('<dd>([\s\S]*?)</dd>', languages_string, re.S))
         except:
@@ -246,8 +241,8 @@ class SearchSpider(scrapy.Spider):
             last_dt_field = "education"
         elif last_dt_field == 'Language Fluency':
             last_dt_field = "languages"
-
-        last_dt_field_dict = {last_dt_field: last_dt_content}
+        else:
+            last_dt_field = None
 
         data = {
             "name": name,
@@ -266,18 +261,18 @@ class SearchSpider(scrapy.Spider):
             "past_positions": past_positions,
             "languages": languages,
             "category": category,
-            "url": response.url
+            "url": response.url,
         }
-        data.update(last_dt_field_dict)
+        if last_dt_field:
+            last_dt_field_dict = {last_dt_field: last_dt_content}
+            data.update(last_dt_field_dict)
         return data
 
     def parse_detail(self, response):
+        external_url = response.headers.get("Location")
+        if external_url:
+            external_url = external_url.decode()
         if response.status == 302:
-            external_url = response.headers.get("Location")
-            if external_url:
-                external_url = external_url.decode()
-            else:
-                external_url = ''
             data = {"status_code": response.status, "internal_url": response.url, "external_url": external_url}
             item = AbandonItem(**data)
             yield item
@@ -298,11 +293,10 @@ class SearchSpider(scrapy.Spider):
                     yield item
                     yield item2
                 else:
-                    external_url = response.headers.get("Location")
-                    if external_url:
-                        external_url = external_url.decode()
-                    else:
-                        external_url = ''
                     data = {"status_code": response.status, "internal_url": response.url, "external_url": external_url}
                     item = AbandonItem(**data)
                     yield item
+            else:
+                data = {"status_code": response.status, "internal_url": response.url, "external_url": external_url}
+                item = AbandonItem(**data)
+                yield item

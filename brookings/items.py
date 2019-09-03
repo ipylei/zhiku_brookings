@@ -48,6 +48,7 @@ class ExpertItem(scrapy.Item):
     current_positions = scrapy.Field()
     past_positions = scrapy.Field()
     languages = scrapy.Field()
+    research_team = scrapy.Field()
 
 
 class ExpertContactItem(scrapy.Item):

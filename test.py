@@ -17,4 +17,3 @@ if topic:
 else:
     print('----')
 
-print(dict())

@@ -24,7 +24,7 @@ import re
 
 # published_time = '2019-08-19T10:00:49-04:00'
 # published_time = '2019-03-07T05:00:48+00:00'
-published_time = '2012-04-29T19:41:29Z'
+published_time = '2012-04-29TYYY19:41:29Z'
 published_time = re.search('\d+-\d+-\d+.*?\d+:\d+:\d+.*?', published_time).group()
 # published_time = published_time.replace('T', ' ')
 published_time = re.sub('[^\d\-:]+', ' ', published_time, re.S)
