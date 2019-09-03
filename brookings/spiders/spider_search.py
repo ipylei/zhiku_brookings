@@ -24,10 +24,10 @@ class SearchSpider(scrapy.Spider):
     def start_requests(self):
         # search_words = 'news'
         # BASIC_URL = 'https://www.brookings.edu/search/?s={}'
-        search_words = 'events'
-        start_url = BASIC_URL.format(search_words)
+        # search_words = 'events'
+        # start_url = BASIC_URL.format(search_words)
 
-        # start_url = "https://www.brookings.edu/search/?s=&post_type=essay&topic=&pcp=&date_range=&start_date=&end_date="
+        start_url = "https://www.brookings.edu/search/?s=&post_type=essay&topic=&pcp=&date_range=&start_date=&end_date="
         yield scrapy.Request(url=start_url)
 
     def parse(self, response):
@@ -222,6 +222,33 @@ class SearchSpider(scrapy.Spider):
         except:
             languages = ''
 
+        last_dt_content = response.xpath(
+            "//div[@class='expert-grid']/dl/dt[last()]/following-sibling::dd/text()").extract()
+        last_dt_content = ';'.join(last_dt_content)
+        last_dt_field = response.xpath("//div[@class='expert-grid']/dl/dt[last()]/text()").extract_first()
+        if last_dt_field:
+            last_dt_field = last_dt_field.strip().replace('"', '')
+        if last_dt_field == 'Contact':
+            last_dt_field = "contact"
+        elif last_dt_field == 'Topics':
+            last_dt_field = "topics"
+        elif last_dt_field == "Centers":
+            last_dt_field = "centers"
+        elif last_dt_field == 'Projects':
+            last_dt_field = "projects"
+        elif last_dt_field == 'Additional Expertise Areas':
+            last_dt_field = "addition_areas"
+        elif last_dt_field == 'Current Positions':
+            last_dt_field = "current_positions"
+        elif last_dt_field == 'Past Positions':
+            last_dt_field = "past_positions"
+        elif last_dt_field == 'Education':
+            last_dt_field = "education"
+        elif last_dt_field == 'Language Fluency':
+            last_dt_field = "languages"
+
+        last_dt_field_dict = {last_dt_field: last_dt_content}
+
         data = {
             "name": name,
             "head_portrait": head_portrait,
@@ -241,6 +268,7 @@ class SearchSpider(scrapy.Spider):
             "category": category,
             "url": response.url
         }
+        data.update(last_dt_field_dict)
         return data
 
     def parse_detail(self, response):

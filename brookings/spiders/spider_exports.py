@@ -99,6 +99,33 @@ class ExpertSpider(scrapy.Spider):
         except:
             languages = ''
 
+        last_dt_content = response.xpath(
+            "//div[@class='expert-grid']/dl/dt[last()]/following-sibling::dd/text()").extract()
+        last_dt_content = ';'.join(last_dt_content)
+        last_dt_field = response.xpath("//div[@class='expert-grid']/dl/dt[last()]/text()").extract_first()
+        if last_dt_field:
+            last_dt_field = last_dt_field.strip().replace('"', '')
+        if last_dt_field == 'Contact':
+            last_dt_field = "contact"
+        elif last_dt_field == 'Topics':
+            last_dt_field = "topics"
+        elif last_dt_field == "Centers":
+            last_dt_field = "centers"
+        elif last_dt_field == 'Projects':
+            last_dt_field = "projects"
+        elif last_dt_field == 'Additional Expertise Areas':
+            last_dt_field = "addition_areas"
+        elif last_dt_field == 'Current Positions':
+            last_dt_field = "current_positions"
+        elif last_dt_field == 'Past Positions':
+            last_dt_field = "past_positions"
+        elif last_dt_field == 'Education':
+            last_dt_field = "education"
+        elif last_dt_field == 'Language Fluency':
+            last_dt_field = "languages"
+        else:
+            last_dt_field = ''
+
         data = {
             "name": name,
             "head_portrait": head_portrait,
@@ -118,6 +145,9 @@ class ExpertSpider(scrapy.Spider):
             "category": category,
             "url": response.url,
         }
+        if last_dt_field:
+            last_dt_field_dict = {last_dt_field: last_dt_content}
+            data.update(last_dt_field_dict)
         return data
 
     def parse_expert(self, response):

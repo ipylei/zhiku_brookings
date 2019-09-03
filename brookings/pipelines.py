@@ -14,6 +14,7 @@ from brookings.models import Session, SearchSeed, ExpertsSeed, AbandonSeed, Expe
 
 
 class BrookingsPipeline(object):
+
     def __init__(self, host, username, password, port, queue, switch):
         self.host = host
         self.username = username
@@ -52,11 +53,11 @@ class BrookingsPipeline(object):
             elif isinstance(item, ExpertItem):
                 obj = ExpertsSeed(**data)
                 obj.save()
-            elif isinstance(item, AbandonItem):
-                obj = AbandonSeed(**data)
-                obj.save()
             elif isinstance(item, ExpertContactItem):
                 obj = ExpertContactSeed(**data)
+                obj.save()
+            elif isinstance(item, AbandonItem):
+                obj = AbandonSeed(**data)
                 obj.save()
 
             if self.switch:
@@ -73,11 +74,10 @@ class BrookingsPipeline(object):
             raise DropItem(e)
 
     def open_spider(self, spider):
-        self.credentials = pika.PlainCredentials(self.username, self.password)
         self.connection = pika.BlockingConnection(
             pika.ConnectionParameters(host=self.host,
                                       port=self.port,
-                                      credentials=self.credentials,
+                                      credentials=pika.PlainCredentials(self.username, self.password),
                                       heartbeat=0
                                       ))
         self.channel = self.connection.channel()
