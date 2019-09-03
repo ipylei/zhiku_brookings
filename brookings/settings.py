@@ -112,7 +112,7 @@ MQ_USERNAME = 'guest'
 MQ_PASSWORD = 'guest'
 MQ_PORT = 5672
 MQ_QUEUE = 'zk_file_task_queue'
-MQ_SWITCH = False  # 是否推入MQ
+MQ_SWITCH = True  # 是否推入MQ
 
 # 翻页页数
 PAGE_COUNT = 10

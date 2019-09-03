@@ -63,12 +63,11 @@ class ExpertsSeed(Base):
 
     # contact = Column(String(500), default='', comment='联系方式')  # 含多个
     reward = Column(Text, default='', comment='获奖')  # 含多个
-    active_media = Column(String(500), default='', comment='活跃的媒体')  # 含多个
+    active_media = Column(String(500), default='', comment='活跃的媒体')  # 含多个,json格式
     relevant = Column(Text, default='', comment='相关计划')  # 含多个
 
     pdf_file = Column(Text, default='', comment='附件路径')  # 含多个
     url = Column(String(500), unique=True, nullable=False, comment='url')
-    category = Column(String(500), default='', comment='栏目')
 
     topics = Column(String(500), default='', comment='话题')  # 含多个
     centers = Column(String(500), default='', comment='中心')  # 含多个
@@ -87,8 +86,10 @@ class ExpertsSeed(Base):
 class ExpertContactSeed(Base):
     __tablename__ = 'brookings_experts_contact'  # 表名
     id = Column(Integer, primary_key=True)
-    name = Column(String(255), unique=True, nullable=False, comment='姓名')
-    contact = Column(String(500), default='', comment='联系方式')  # 含多个
+    url = Column(String(500), nullable=False, comment='url')
+    name = Column(String(255), nullable=False, comment='姓名')
+    type = Column(String(255), nullable=False, comment='联系方式对应的类型')
+    contact = Column(String(500), default='', comment='联系方式')  # 一条一个
 
     def save(self):
         Session.add(self)

@@ -39,7 +39,6 @@ class ExpertItem(scrapy.Item):
 
     url = scrapy.Field()
     pdf_file = scrapy.Field()  # 附件地址
-    category = scrapy.Field()  # 栏目
 
     topics = scrapy.Field()
     centers = scrapy.Field()
@@ -52,7 +51,9 @@ class ExpertItem(scrapy.Item):
 
 
 class ExpertContactItem(scrapy.Item):
+    url = scrapy.Field()
     name = scrapy.Field()
+    type = scrapy.Field()
     contact = scrapy.Field()
 
 

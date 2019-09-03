@@ -8,8 +8,10 @@ parsing_rule_experts = {
     "job": "//div[@class='expert-info']//h3[@class='title']/text()",
     "research_field": "//div[@class='expert-info']//h3[@class='title']/a/text()",
     "education": "//dt[contains(text(),'Education')]/following-sibling::dd/text()",
-    "contact": "//div[@class='expert-grid']//dd[@class='expert-contact']//a/@href | //div[@class='expert-grid']//dd//a[@class='number']/@href",
     "pdf_file": "//p[@class='download-cta']/following-sibling::*//li//a/@href",
+    "active_media": "//div[@class='expert-info']//div[@class='expert-contact']//a[not(@href='#')][not(@class='email')]",
+    "contact": "//div[@class='expert-grid']//dd[@class='expert-contact']//a[not(@href='#')] | //div[@class='expert-grid']//dd[not(@class='expert-contact')]//a[@itemprop][not(@href='#')]"
+
 }
 parsing_rule_events = {
     "title": "//h1[@itemprop='name']/text() | //div[@class='headline-wrapper']//h1[@class='report-title']/text() | //meta[@property='og:title']/@content",

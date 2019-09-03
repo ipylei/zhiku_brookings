@@ -115,7 +115,10 @@ class SearchSpider(scrapy.Spider):
             annex_dict = dict()
             annex_dict['附件{}'.format(i + 1)] = pdf_urls[i]
             pdf_file_dict['附件'].append(annex_dict)
-        pdf_file = json.dumps(pdf_file_dict, ensure_ascii=False)
+        if pdf_file_dict.get('附件'):
+            pdf_file = json.dumps(pdf_file_dict, ensure_ascii=False)
+        else:
+            pdf_file = ''
         data = {
             "title": title,
             "publish_time": publish_time,
@@ -143,10 +146,9 @@ class SearchSpider(scrapy.Spider):
         data['url'] = response.url
         return data
 
-    def _get_experts_data(self, category, parsing_rule_dict, response):
+    def _get_experts_data(self, parsing_rule_dict, response):
         """解析专家页面
         :param category: 种类
-        :param parsing_rule_dict: 专家页对应的解析规则字典
         :param reponse: 该页面响应
         :return: 各字段构造成的字典
         """
@@ -156,62 +158,82 @@ class SearchSpider(scrapy.Spider):
         jobs = response.xpath(parsing_rule_dict.get("job")).extract()
         job = [job.replace('-', '') for job in jobs]
         job = ';'.join(job)
-        research_field = response.xpath("research_field").extract()
+        research_field = response.xpath(parsing_rule_dict.get("research_field")).extract()
         research_field = ';'.join(research_field)
-        education = response.xpath("education").extract()
+        education = response.xpath(parsing_rule_dict.get("education")).extract()
         education = ';'.join(education)
-        contact = response.xpath(parsing_rule_dict.get("contact")).extract()
-        contact = ';'.join(contact)
-        contact = contact.replace('#;', '')
-        contact = contact.replace('#', '')
+
+        # 附件
         pdf_urls = response.xpath(parsing_rule_dict.get("pdf_file")).extract()
-        pdf_file_dict = {'附件': []}
+        pdf_file_dict = {"附件": []}
         for i in range(len(pdf_urls)):
             annex_dict = dict()
-            annex_dict['附件{}'.format(i + 1)] = pdf_urls[i]
-            pdf_file_dict['附件'].append(annex_dict)
-        pdf_file = json.dumps(pdf_file_dict, ensure_ascii=False)
-        expert_grid = response.xpath(parsing_rule_dict.get("expert-grid")).extract_first()
+            annex_dict["附件{}".format(i + 1)] = pdf_urls[i]
+            pdf_file_dict["附件"].append(annex_dict)
+        if pdf_file_dict.get("附件"):
+            pdf_file = json.dumps(pdf_file_dict, ensure_ascii=False)
+        else:
+            pdf_file = ''
+        # 联系方式
+        contact = dict()
+        contact_selectors = response.xpath(parsing_rule_dict.get("contact"))
+        for selector in contact_selectors:
+            contact[selector.xpath("./@itemprop")] = contact[selector.xpath("./@href")]
+
+        # 活跃的媒体
+        active_media_dict = dict()
+        active_media_selectors = response.xpath(parsing_rule_dict.get("active_media"))
+        for media in active_media_selectors:
+            active_media_dict[media.xpath("./@class")] = media.xpath("./@href")
+        if active_media_dict:
+            contact.update(active_media_dict)  # 更新联系方式，添加活跃的媒体
+            active_media = json.dumps(active_media_dict, ensure_ascii=False)
+        else:
+            active_media = ''
+
+        expert_grid_selectors = response.xpath(parsing_rule_dict.get("expert-grid"))
         try:
-            topics_string = expert_grid.xpath('//dl').re_first('<dt>[\s\S]*?Topics[\s\S]*?</dt>([\s\S]*?)<dt>')
+            topics_string = expert_grid_selectors.xpath('//dl').re_first(
+                '<dt>[\s\S]*?Topics[\s\S]*?</dt>([\s\S]*?)<dt>')
             topics = ';'.join(re.findall('<dd><.*?>([\s\S]*?)<.*?></dd>', topics_string, re.S))
         except:
             topics = ''
         try:
-            centers_string = expert_grid.xpath('//dl').re_first('<dt>[\s\S]*?Centers[\s\S]*?</dt>([\s\S]*?)<dt>')
+            centers_string = expert_grid_selectors.xpath('//dl').re_first(
+                '<dt>[\s\S]*?Centers[\s\S]*?</dt>([\s\S]*?)<dt>')
             centers = ';'.join(re.findall('<dd><.*?>([\s\S]*?)<.*?></dd>', centers_string, re.S))
         except:
             centers = ''
         try:
-            projects_string = expert_grid.xpath('//dl').re_first('<dt>[\s\S]*?Projects[\s\S]*?</dt>([\s\S]*?)<dt>')
+            projects_string = expert_grid_selectors.xpath('//dl').re_first(
+                '<dt>[\s\S]*?Projects[\s\S]*?</dt>([\s\S]*?)<dt>')
             projects = ';'.join(
                 re.findall('<dd><.*?>([\s\S]*?)<.*?></dd>', projects_string, re.S)) if projects_string else ''
         except:
             projects = ''
         try:
-            addition_areas_string = expert_grid.xpath('//dl').re_first(
+            addition_areas_string = expert_grid_selectors.xpath('//dl').re_first(
                 '<dt>[\s\S]*?Additional Expertise Areas[\s\S]*?</dt>([\s\S]*?)<dt>')
             addition_areas = ';'.join(
                 re.findall('<dd>([\s\S]*?)</dd>', addition_areas_string, re.S)) if addition_areas_string else ''
         except:
             addition_areas = ''
-
         try:
-            current_positions_string = expert_grid.xpath('//dl').re_first(
+            current_positions_string = expert_grid_selectors.xpath('//dl').re_first(
                 '<dt>[\s\S]*?Current Positions[\s\S]*?</dt>([\s\S]*?)<dt>')
             current_positions = ';'.join(
                 re.findall('<dd>([\s\S]*?)</dd>', current_positions_string, re.S)) if current_positions_string else ''
         except:
             current_positions = ''
         try:
-            past_positions_string = expert_grid.xpath('//dl').re_first(
+            past_positions_string = expert_grid_selectors.xpath('//dl').re_first(
                 '<dt>[\s\S]*?Past Positions[\s\S]*?</dt>([\s\S]*?)<dt>')
             past_positions = ';'.join(
                 re.findall('<dd>([\s\S]*?)</dd>', past_positions_string, re.S)) if past_positions_string else ''
         except:
             past_positions = ''
         try:
-            languages_string = expert_grid.xpath('//dl').re_first(
+            languages_string = expert_grid_selectors.xpath('//dl').re_first(
                 '<dt>[\s\S]*?Language Fluency[\s\S]*?</dt>([\s\S]*?)<dt>')
             languages = ';'.join(re.findall('<dd>([\s\S]*?)</dd>', languages_string, re.S))
         except:
@@ -223,8 +245,8 @@ class SearchSpider(scrapy.Spider):
         last_dt_field = response.xpath("//div[@class='expert-grid']/dl/dt[last()]/text()").extract_first()
         if last_dt_field:
             last_dt_field = last_dt_field.strip().replace('"', '')
-        if last_dt_field == 'Contact':
-            last_dt_field = "contact"
+        if last_dt_field == 'Contact':  # 联系方式不在此列
+            last_dt_field = None
         elif last_dt_field == 'Topics':
             last_dt_field = "topics"
         elif last_dt_field == "Centers":
@@ -241,7 +263,7 @@ class SearchSpider(scrapy.Spider):
             last_dt_field = "education"
         elif last_dt_field == 'Language Fluency':
             last_dt_field = "languages"
-        else:
+        else:  # 其他不知名的不在此列
             last_dt_field = None
 
         data = {
@@ -251,7 +273,6 @@ class SearchSpider(scrapy.Spider):
             "job": job,
             "research_field": research_field,
             "education": education,
-            "contact": contact,
             "pdf_file": pdf_file,
             "topics": topics,
             "centers": centers,
@@ -260,8 +281,9 @@ class SearchSpider(scrapy.Spider):
             "current_positions": current_positions,
             "past_positions": past_positions,
             "languages": languages,
-            "category": category,
             "url": response.url,
+            "active_media": active_media,
+            "contact": contact,
         }
         if last_dt_field:
             last_dt_field_dict = {last_dt_field: last_dt_content}
@@ -286,12 +308,14 @@ class SearchSpider(scrapy.Spider):
                     item = SearchItem(**data)
                     yield item
                 elif category in parsing_rules and category == "experts":  # 专家
-                    data = self._get_experts_data(category, parsing_rule_dict, response)
-                    data2 = {"name": data.get("name"), "contact": data.pop("contact")}
+                    data = self._get_experts_data(parsing_rule_dict, response)
+                    contacts = data.pop("contact")
                     item = ExpertItem(**data)
-                    item2 = ExpertContactItem(**data2)
                     yield item
-                    yield item2
+                    for key, value in contacts:
+                        contact_data = {"url": response.url, "name": data.get("name"), "type": key, "contact": value}
+                        item2 = ExpertContactItem(**contact_data)
+                        yield item2  # 联系方式
                 else:
                     data = {"status_code": response.status, "internal_url": response.url, "external_url": external_url}
                     item = AbandonItem(**data)
