@@ -1,0 +1,110 @@
+2019-09-04 23:59:12 [expert_spider] WARNING: https://www.brookings.edu/experts/henry-j-aaron/
+2019-09-04 23:59:12 [py.warnings] WARNING: E:\Python\env3.6\pythonbase\lib\site-packages\pymysql\cursors.py:170: Warning: (1366, "Incorrect string value: '\\xD6\\xD0\\xB9\\xFA\\xB1\\xEA...' for column 'VARIABLE_VALUE' at row 485")
+  result = self._query(query)
+
+2019-09-04 23:59:12 [expert_spider] WARNING: https://www.brookings.edu/experts/jeremy-barofsky/
+2019-09-04 23:59:13 [expert_spider] WARNING: https://www.brookings.edu/experts/jeffrey-ball/
+2019-09-04 23:59:13 [expert_spider] WARNING: https://www.brookings.edu/experts/david-baker/
+2019-09-04 23:59:13 [expert_spider] WARNING: https://www.brookings.edu/experts/kaushik-basu/
+2019-09-04 23:59:13 [expert_spider] WARNING: https://www.brookings.edu/experts/thomas-c-barrett/
+2019-09-04 23:59:13 [expert_spider] WARNING: https://www.brookings.edu/experts/lauren-bauer/
+2019-09-04 23:59:13 [expert_spider] WARNING: https://www.brookings.edu/experts/daniel-benjamin/
+2019-09-04 23:59:13 [expert_spider] WARNING: https://www.brookings.edu/experts/carlo-bastasin/
+2019-09-04 23:59:13 [expert_spider] WARNING: https://www.brookings.edu/experts/celia-belin/
+2019-09-04 23:59:14 [expert_spider] WARNING: https://www.brookings.edu/experts/pavel-k-baev/
+2019-09-04 23:59:14 [expert_spider] WARNING: https://www.brookings.edu/experts/jeffrey-a-bader/
+2019-09-04 23:59:14 [expert_spider] WARNING: https://www.brookings.edu/experts/martin-neil-baily/
+2019-09-04 23:59:14 [expert_spider] WARNING: https://www.brookings.edu/experts/john-c-austin/
+2019-09-04 23:59:14 [expert_spider] WARNING: https://www.brookings.edu/experts/tamar-manuelyan-atinc/
+2019-09-04 23:59:14 [expert_spider] WARNING: https://www.brookings.edu/experts/william-j-antholis/
+2019-09-04 23:59:14 [expert_spider] WARNING: https://www.brookings.edu/experts/scott-r-anderson/
+2019-09-04 23:59:15 [expert_spider] WARNING: https://www.brookings.edu/experts/dany-bahar/
+2019-09-04 23:59:15 [expert_spider] WARNING: https://www.brookings.edu/experts/hady-amr/
+2019-09-04 23:59:15 [expert_spider] WARNING: https://www.brookings.edu/experts/asaad-alsaleh/
+2019-09-04 23:59:15 [expert_spider] WARNING: https://www.brookings.edu/experts/john-r-allen/
+2019-09-04 23:59:15 [expert_spider] WARNING: https://www.brookings.edu/experts/scott-w-allard/
+2019-09-04 23:59:15 [expert_spider] WARNING: https://www.brookings.edu/experts/sahil-ali/
+2019-09-04 23:59:15 [expert_spider] WARNING: https://www.brookings.edu/experts/ranj-alaaldin/
+2019-09-04 23:59:15 [expert_spider] WARNING: https://www.brookings.edu/experts/randall-akee/
+2019-09-04 23:59:16 [expert_spider] WARNING: https://www.brookings.edu/experts/ajai-nirula/
+2019-09-04 23:59:16 [expert_spider] WARNING: https://www.brookings.edu/experts/anqi-chen/
+2019-09-04 23:59:16 [expert_spider] WARNING: https://www.brookings.edu/experts/erik-berglof/
+2019-09-04 23:59:16 [expert_spider] WARNING: https://www.brookings.edu/experts/madiha-afzal/
+2019-09-04 23:59:16 [expert_spider] WARNING: https://www.brookings.edu/experts/yasmina-abouzzohour/
+2019-09-04 23:59:16 [expert_spider] WARNING: https://www.brookings.edu/experts/noha-aboueldahab/
+2019-09-04 23:59:17 [expert_spider] WARNING: https://www.brookings.edu/experts/stephanie-aaronson/
+2019-09-04 23:59:17 [expert_spider] WARNING: https://www.brookings.edu/experts/tarun-chhabra-2/
+2019-09-04 23:59:17 [expert_spider] WARNING: https://www.brookings.edu/experts/judy-chevalier/
+2019-09-04 23:59:17 [expert_spider] WARNING: https://www.brookings.edu/experts/matthew-collin/
+2019-09-04 23:59:17 [expert_spider] WARNING: https://www.brookings.edu/experts/stephen-p-cohen/
+2019-09-04 23:59:18 [expert_spider] WARNING: https://www.brookings.edu/experts/thomas-j-christensen/
+2019-09-04 23:59:18 [expert_spider] WARNING: https://www.brookings.edu/experts/bhaskar-chakravorti/
+2019-09-04 23:59:18 [expert_spider] WARNING: https://www.brookings.edu/experts/rajesh-chadha/
+2019-09-04 23:59:18 [expert_spider] WARNING: https://www.brookings.edu/experts/eyal-tsir-cohen/
+2019-09-04 23:59:18 [expert_spider] WARNING: https://www.brookings.edu/experts/greg-clark/
+2019-09-04 23:59:18 [expert_spider] WARNING: https://www.brookings.edu/experts/stephanie-riegg-cellini/
+2019-09-04 23:59:18 [expert_spider] WARNING: https://www.brookings.edu/experts/marcus-casey/
+2019-09-04 23:59:19 [expert_spider] WARNING: https://www.brookings.edu/experts/esther-care/
+2019-09-04 23:59:19 [expert_spider] WARNING: https://www.brookings.edu/experts/otaviano-canuto/
+2019-09-04 23:59:19 [expert_spider] WARNING: https://www.brookings.edu/experts/stuart-m-butler/
+2019-09-04 23:59:19 [expert_spider] WARNING: https://www.brookings.edu/experts/richard-c-bush/
+2019-09-04 23:59:19 [expert_spider] WARNING: https://www.brookings.edu/experts/daniel-l-byman/
+2019-09-04 23:59:19 [expert_spider] WARNING: https://www.brookings.edu/experts/charles-t-call/
+2019-09-04 23:59:20 [expert_spider] WARNING: https://www.brookings.edu/experts/gary-burtless/
+2019-09-04 23:59:20 [expert_spider] WARNING: https://www.brookings.edu/experts/camille-busette/
+2019-09-04 23:59:20 [expert_spider] WARNING: https://www.brookings.edu/experts/ralph-c-bryant/
+2019-09-04 23:59:20 [expert_spider] WARNING: https://www.brookings.edu/experts/barry-p-bosworth/
+2019-09-04 23:59:20 [expert_spider] WARNING: https://www.brookings.edu/experts/colin-i-bradford/
+2019-09-04 23:59:21 [expert_spider] WARNING: https://www.brookings.edu/experts/sandra-e-black/
+2019-09-04 23:59:21 [expert_spider] WARNING: https://www.brookings.edu/experts/sarah-a-binder/
+2019-09-04 23:59:21 [expert_spider] WARNING: https://www.brookings.edu/experts/haroon-bhorat/
+2019-09-04 23:59:21 [expert_spider] WARNING: https://www.brookings.edu/experts/kevin-c-desouza/
+2019-09-04 23:59:21 [expert_spider] WARNING: https://www.brookings.edu/experts/galip-dalay/
+2019-09-04 23:59:22 [expert_spider] WARNING: https://www.brookings.edu/experts/steven-a-farmer/
+2019-09-04 23:59:22 [expert_spider] WARNING: https://www.brookings.edu/experts/mark-fabian/
+2019-09-04 23:59:22 [expert_spider] WARNING: https://www.brookings.edu/experts/raj-m-desai/
+2019-09-04 23:59:22 [expert_spider] WARNING: https://www.brookings.edu/experts/kemal-dervis/
+2019-09-04 23:59:22 [expert_spider] WARNING: https://www.brookings.edu/experts/stephen-eubank/
+2019-09-04 23:59:22 [expert_spider] WARNING: https://www.brookings.edu/experts/marcela-escobari/
+2019-09-04 23:59:22 [expert_spider] WARNING: https://www.brookings.edu/experts/antoni-estevadeordal/
+2019-09-04 23:59:23 [expert_spider] WARNING: https://www.brookings.edu/experts/norman-eisen/
+2019-09-04 23:59:23 [expert_spider] WARNING: https://www.brookings.edu/experts/robert-einhorn/
+2019-09-04 23:59:23 [expert_spider] WARNING: https://www.brookings.edu/experts/alex-engler/
+2019-09-04 23:59:23 [expert_spider] WARNING: https://www.brookings.edu/experts/adam-elshaug/
+2019-09-04 23:59:23 [expert_spider] WARNING: https://www.brookings.edu/experts/khaled-elgindy/
+2019-09-04 23:59:23 [expert_spider] WARNING: https://www.brookings.edu/experts/janice-c-eberly/
+2019-09-04 23:59:24 [expert_spider] WARNING: https://www.brookings.edu/experts/salam-fayyad/
+2019-09-04 23:59:24 [expert_spider] WARNING: https://www.brookings.edu/experts/joshua-gotbaum/
+2019-09-04 23:59:24 [expert_spider] WARNING: https://www.brookings.edu/experts/federica-saini-fasanotti/
+2019-09-04 23:59:24 [expert_spider] WARNING: https://www.brookings.edu/experts/arne-duncan/
+2019-09-04 23:59:25 [expert_spider] WARNING: https://www.brookings.edu/experts/ali-fathollah-nejad/
+2019-09-04 23:59:25 [expert_spider] WARNING: https://www.brookings.edu/experts/annelies-goger/
+2019-09-04 23:59:25 [expert_spider] WARNING: https://www.brookings.edu/experts/james-goldgeier/
+2019-09-04 23:59:25 [expert_spider] WARNING: https://www.brookings.edu/experts/marek-gootman/
+2019-09-04 23:59:25 [expert_spider] WARNING: https://www.brookings.edu/experts/paul-ginsburg/
+2019-09-04 23:59:25 [expert_spider] WARNING: https://www.brookings.edu/experts/dana-goldman/
+2019-09-04 23:59:25 [expert_spider] WARNING: https://www.brookings.edu/experts/d-michael-goedecke/
+2019-09-04 23:59:26 [expert_spider] WARNING: https://www.brookings.edu/experts/indermit-gill/
+2019-09-04 23:59:26 [expert_spider] WARNING: https://www.brookings.edu/author/susan-m-dynarski/
+2019-09-04 23:59:26 [scrapy.core.scraper] WARNING: Dropped: (pymysql.err.IntegrityError) (1062, "Duplicate entry 'https://www.brookings.edu/author/susan-m-dynarski/' for key 'internal_url'")
+[SQL: INSERT INTO brookings_abandon (status_code, internal_url, external_url) VALUES (%(status_code)s, %(internal_url)s, %(external_url)s)]
+[parameters: {'status_code': 200, 'internal_url': 'https://www.brookings.edu/author/susan-m-dynarski/', 'external_url': ''}]
+(Background on this error at: http://sqlalche.me/e/gkpj)
+{'external_url': None,
+ 'internal_url': 'https://www.brookings.edu/author/susan-m-dynarski/',
+ 'status_code': 200}
+2019-09-04 23:59:26 [expert_spider] WARNING: https://www.brookings.edu/experts/julia-gillard/
+2019-09-04 23:59:26 [expert_spider] WARNING: https://www.brookings.edu/experts/adel-abdel-ghafar/
+2019-09-04 23:59:26 [expert_spider] WARNING: https://www.brookings.edu/experts/paul-gewirtz/
+2019-09-04 23:59:27 [expert_spider] WARNING: https://www.brookings.edu/experts/tarek-ghani/
+2019-09-04 23:59:27 [expert_spider] WARNING: https://www.brookings.edu/experts/hafez-ghanem/
+2019-09-04 23:59:27 [expert_spider] WARNING: https://www.brookings.edu/experts/paolo-gentiloni/
+2019-09-04 23:59:27 [expert_spider] WARNING: https://www.brookings.edu/experts/geoffrey-gertz/
+2019-09-04 23:59:27 [expert_spider] WARNING: https://www.brookings.edu/experts/stephen-hess/
+2019-09-04 23:59:27 [expert_spider] WARNING: https://www.brookings.edu/experts/brad-hershbein/
+2019-09-04 23:59:28 [expert_spider] WARNING: https://www.brookings.edu/experts/makada-henry-nickie/
+2019-09-04 23:59:28 [expert_spider] WARNING: https://www.brookings.edu/experts/carol-graham/
+2019-09-04 23:59:28 [expert_spider] WARNING: https://www.brookings.edu/experts/steven-heydemann/
+2019-09-04 23:59:28 [expert_spider] WARNING: https://www.brookings.edu/experts/kathy-hirsh-pasek/
+2019-09-04 23:59:28 [expert_spider] WARNING: https://www.brookings.edu/experts/fiona-hill/
+2019-09-04 23:59:29 [expert_spider] WARNING: https://www.brookings.edu/experts/ryan-hass/

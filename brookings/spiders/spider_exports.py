@@ -43,15 +43,11 @@ class ExpertsSpider(scrapy.Spider):
         education = ';'.join(education)
 
         pdf_urls = response.xpath(parsing_rule_dict.get("pdf_file")).extract()
-        pdf_file_dict = {'附件': []}
-        for i in range(len(pdf_urls)):
-            annex_dict = dict()
-            annex_dict['附件{}'.format(i + 1)] = pdf_urls[i]
-            pdf_file_dict['附件'].append(annex_dict)
+        pdf_file_dict = {'附件': pdf_urls}
         if pdf_file_dict.get('附件'):
             pdf_file = json.dumps(pdf_file_dict, ensure_ascii=False)
         else:
-            pdf_file = ''
+            pdf_file = None
 
         # 联系方式
         contact = dict()
@@ -170,6 +166,7 @@ class ExpertsSpider(scrapy.Spider):
         return data
 
     def parse_expert(self, response):
+        self.logger.warning(response.url)
         external_url = response.headers.get("Location")
         if external_url:
             external_url = external_url.decode()

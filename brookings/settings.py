@@ -98,13 +98,13 @@ LOG_ENABLED = True
 # 日志使用的编码
 LOG_ENCODING = 'utf-8'
 # 日志文件(文件名)
-LOG_FILE = None
+LOG_FILE = './log.txt'
 # 日志格式
 LOG_FORMAT = '%(asctime)s [%(name)s] %(levelname)s: %(message)s'
 # 日志时间格式
 LOG_DATEFORMAT = '%Y-%m-%d %H:%M:%S'
 # 日志级别 CRITICAL, ERROR, WARNING, INFO, DEBUG
-LOG_LEVEL = 'DEBUG'
+LOG_LEVEL = 'WARNING'
 # 如果等于True，所有的标准输出（包括错误）都会重定向到日志，例如：print('hello')
 LOG_STDOUT = False
 # 如果等于True，日志仅仅包含根路径，False显示日志输出组件

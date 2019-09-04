@@ -168,15 +168,11 @@ class SearchSpider(scrapy.Spider):
 
         # 附件
         pdf_urls = response.xpath(parsing_rule_dict.get("pdf_file")).extract()
-        pdf_file_dict = {"附件": []}
-        for i in range(len(pdf_urls)):
-            annex_dict = dict()
-            annex_dict["附件{}".format(i + 1)] = pdf_urls[i]
-            pdf_file_dict["附件"].append(annex_dict)
-        if pdf_file_dict.get("附件"):
+        pdf_file_dict = {'附件': pdf_urls}
+        if pdf_file_dict.get('附件'):
             pdf_file = json.dumps(pdf_file_dict, ensure_ascii=False)
         else:
-            pdf_file = ''
+            pdf_file = None
         # 联系方式
         contact = dict()
         contact_selectors = response.xpath(parsing_rule_dict.get("contact"))
