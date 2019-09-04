@@ -90,10 +90,28 @@ ITEM_PIPELINES = {
 # HTTPCACHE_STORAGE = 'scrapy.extensions.httpcache.FilesystemCacheStorage'
 
 
+FEED_EXPORT_ENCODING = 'utf-8'
+
+# 日志配置
+# 是否启用日志
+LOG_ENABLED = True
+# 日志使用的编码
+LOG_ENCODING = 'utf-8'
+# 日志文件(文件名)
+LOG_FILE = None
+# 日志格式
+LOG_FORMAT = '%(asctime)s [%(name)s] %(levelname)s: %(message)s'
+# 日志时间格式
+LOG_DATEFORMAT = '%Y-%m-%d %H:%M:%S'
+# 日志级别 CRITICAL, ERROR, WARNING, INFO, DEBUG
+LOG_LEVEL = 'DEBUG'
+# 如果等于True，所有的标准输出（包括错误）都会重定向到日志，例如：print('hello')
+LOG_STDOUT = False
+# 如果等于True，日志仅仅包含根路径，False显示日志输出组件
+LOG_SHORT_NAMES = False
+
 USER_AGENT = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/76.0.3809.87 Safari/537.36'
 # DEFAULT_REQUEST_HEADERS = {}
-
-FEED_EXPORT_ENCODING = 'utf-8'
 
 # REDIRECT_ENABLED = False # 禁止重定向
 # HTTPERROR_ALLOWED_CODES = [301, 302]
@@ -106,13 +124,17 @@ MYSQL_USERNAME = 'root'
 MYSQL_PASSWORD = '123456'
 
 # RabbiMQ配置
-# MQ_HOST = '10.4.7.44'
-MQ_HOST = '127.0.0.1'
+MQ_HOST = '10.4.7.44'
+# MQ_HOST = '127.0.0.1'
 MQ_USERNAME = 'guest'
 MQ_PASSWORD = 'guest'
 MQ_PORT = 5672
-MQ_QUEUE = 'zk_file_task_queue'
-MQ_SWITCH = True  # 是否推入MQ
+MQ_IMAGE_QUEUE = 'zk_img_task_queue'  # 内容图片队列
+MQ_FILE_QUEUE = 'zk_file_task_queue'  # 附件队列
+MQ_EXPERT_QUEUE = 'zk_expert_img_task_queue'  # 专家头像队列
+# MQ_SWITCH = True  # 是否推入MQ
 
 # 翻页页数
 PAGE_COUNT = 10
+
+WEBSITE = '布鲁金斯学会'

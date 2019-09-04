@@ -9,7 +9,7 @@ parsing_rule_experts = {
     "research_field": "//div[@class='expert-info']//h3[@class='title']/a/text()",
     "education": "//dt[contains(text(),'Education')]/following-sibling::dd/text()",
     "pdf_file": "//p[@class='download-cta']/following-sibling::*//li//a/@href",
-    "active_media": "//div[@class='expert-info']//div[@class='expert-contact']//a[not(@href='#')][not(@class='email')]",
+    "active_media": "//div[@class='expert-info']//div[@class='expert-contact']//a[not(@href='#') or not(@class='email')]",
     "contact": "//div[@class='expert-grid']//dd[@class='expert-contact']//a[not(@href='#')] | //div[@class='expert-grid']//dd[not(@class='expert-contact')]//a[@itemprop][not(@href='#')]"
 
 }
@@ -22,7 +22,7 @@ parsing_rule_events = {
     "topic": "//section[@class='related-topics']//ul//a[@class='tag']/text()",
     "keywords": "//meta[@name='keywords']/@content",
     "author": "//div[@class='inline-widget-inner']//span[@itemprop='name']/text()",
-    "pdf_file": "//p[@class='download-cta']/following-sibling::*//li//a/@href",
+    "pdf_file": "//p[@class='download-cta']/following-sibling::*//li//a[not(@href='') or not(@href='#')]/@href",
 }
 parsing_rule_blog = parsing_rule_events
 parsing_rule_book = parsing_rule_events

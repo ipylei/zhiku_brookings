@@ -24,7 +24,8 @@ class ExpertsSpider(scrapy.Spider):
         if next_url:
             yield scrapy.Request(url=next_url)
 
-    def _get_experts_data(self, parsing_rule_dict, response):
+    @staticmethod
+    def _get_experts_data(parsing_rule_dict, response):
         """解析专家页面
         :param category: 种类
         :param reponse: 该页面响应

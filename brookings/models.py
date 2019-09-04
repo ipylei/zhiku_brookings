@@ -84,6 +84,7 @@ class ExpertsSeed(Base):
 
 
 class ExpertContactSeed(Base):
+    """专家联系方式表"""
     __tablename__ = 'brookings_experts_contact'  # 表名
     id = Column(Integer, primary_key=True)
     url = Column(String(500), nullable=False, comment='url')

@@ -46,7 +46,8 @@ class SearchSpider(scrapy.Spider):
             if next_url:
                 yield scrapy.Request(url=next_url)
 
-    def _parse_category1(self, parsing_rule_dict, response):
+    @staticmethod
+    def _parse_category1(parsing_rule_dict, response):
         """ 解析 essay
         :param parsing_rule_dict:
         :param response:
@@ -85,7 +86,8 @@ class SearchSpider(scrapy.Spider):
         }
         return data
 
-    def _parse_category2(self, parsing_rule_dict, response):
+    @staticmethod
+    def _parse_category2(parsing_rule_dict, response):
         """解析 除essay、experts
         :param parsing_rule_dict:
         :param response:
@@ -110,15 +112,15 @@ class SearchSpider(scrapy.Spider):
         author = response.xpath(parsing_rule_dict.get("author")).extract()
         author = ';'.join(author)
         pdf_urls = response.xpath(parsing_rule_dict.get("pdf_file")).extract()
-        pdf_file_dict = {'附件': []}
-        for i in range(len(pdf_urls)):
-            annex_dict = dict()
-            annex_dict['附件{}'.format(i + 1)] = pdf_urls[i]
-            pdf_file_dict['附件'].append(annex_dict)
+        pdf_file_dict = {'附件': pdf_urls}
         if pdf_file_dict.get('附件'):
             pdf_file = json.dumps(pdf_file_dict, ensure_ascii=False)
         else:
-            pdf_file = ''
+            pdf_file = None
+
+        if response.url == 'https://www.brookings.edu/events/a-discussion-with-rep-mac-thornberry-on-military-readiness-modernization-and-innovation/':
+            print('hello world')
+
         data = {
             "title": title,
             "publish_time": publish_time,
@@ -146,7 +148,8 @@ class SearchSpider(scrapy.Spider):
         data['url'] = response.url
         return data
 
-    def _get_experts_data(self, parsing_rule_dict, response):
+    @staticmethod
+    def _get_experts_data(parsing_rule_dict, response):
         """解析专家页面
         :param category: 种类
         :param reponse: 该页面响应
@@ -311,11 +314,11 @@ class SearchSpider(scrapy.Spider):
                     data = self._get_experts_data(parsing_rule_dict, response)
                     contacts = data.pop("contact")
                     item = ExpertItem(**data)
-                    yield item
-                    for key, value in contacts:
+                    for key, value in contacts.items():
                         contact_data = {"url": response.url, "name": data.get("name"), "type": key, "contact": value}
                         item2 = ExpertContactItem(**contact_data)
                         yield item2  # 联系方式
+                    yield item
                 else:
                     data = {"status_code": response.status, "internal_url": response.url, "external_url": external_url}
                     item = AbandonItem(**data)
