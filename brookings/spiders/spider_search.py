@@ -13,17 +13,21 @@ from brookings.items import SearchItem, ExpertItem, AbandonItem, ExpertContactIt
 
 class SearchSpider(scrapy.Spider):
     name = 'search_spider'
-    # allowed_domains = ['brookings.edu']
+
     page_count = 0
     basic_url = 'https://www.brookings.edu/search/?s={}'
     item_xpath_list = [
         "//div[@class='list-content']/article//a[@class='event-content']",  # events
         "//div[@class='list-content']/article//h4[@class='title']/a", ]
 
+    # allowed_domains = ['brookings.edu']
+
+    def __init__(self, name=None, **kwargs):
+        super(SearchSpider, self).__init__(name, **kwargs)
+        self.search_words = kwargs.get('search_words')
+
     def start_requests(self):
-        search_words = 'events'
-        start_url = self.basic_url.format(search_words)
-        # start_url = "https://www.brookings.edu/search/?s=&post_type=essay&topic=&pcp=&date_range=&start_date=&end_date="
+        start_url = self.basic_url.format(self.search_words)
         yield scrapy.Request(url=start_url)
 
     def parse(self, response):
@@ -297,7 +301,7 @@ class SearchSpider(scrapy.Spider):
             data = {"status_code": response.status, "internal_url": response.url, "external_url": external_url}
             item = AbandonItem(**data)
             yield item
-        else:
+        elif response.status == 200:
             category = re.search('.*?brookings.edu/(.*?)/\S+', response.url)
             if category:
                 category = category.group(1)
@@ -315,11 +319,15 @@ class SearchSpider(scrapy.Spider):
                         item2 = ExpertContactItem(**contact_data)
                         yield item2  # 联系方式
                     yield item
-                else:
+                else:  # category未在解析规则中
                     data = {"status_code": response.status, "internal_url": response.url, "external_url": external_url}
                     item = AbandonItem(**data)
                     yield item
-            else:
+            else:  # 没有category的情况
                 data = {"status_code": response.status, "internal_url": response.url, "external_url": external_url}
                 item = AbandonItem(**data)
                 yield item
+        else:  # 其他响应码
+            data = {"status_code": response.status, "internal_url": response.url, "external_url": external_url}
+            item = AbandonItem(**data)
+            yield item

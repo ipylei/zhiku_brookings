@@ -16,13 +16,13 @@ from brookings.models import Session, SearchSeed, ExpertsSeed, AbandonSeed, Expe
 
 class BrookingsPipeline(object):
 
-    def __init__(self, host, username, password, port, image_queue, file_queue, expert_queue, switch, website):
+    def __init__(self, host, username, password, port, file_queue, image_queue, expert_queue, switch, website):
         self.host = host
         self.username = username
         self.password = password
         self.port = port
-        self.image_queue = image_queue
         self.file_queue = file_queue
+        self.image_queue = image_queue
         self.expert_queue = expert_queue
         self.switch = switch
 
@@ -35,8 +35,8 @@ class BrookingsPipeline(object):
             username=crawler.settings.get("MQ_USERNAME"),
             password=crawler.settings.get("MQ_PASSWORD"),
             port=crawler.settings.get("MQ_PORT"),
-            image_queue=crawler.settings.get("MQ_IMAGE_QUEUE"),
             file_queue=crawler.settings.get("MQ_FILE_QUEUE"),
+            image_queue=crawler.settings.get("MQ_IMAGE_QUEUE"),
             expert_queue=crawler.settings.get("MQ_EXPERT_QUEUE"),
             switch=crawler.settings.get("MQ_SWITCH"),
             website=crawler.settings.get("WEBSITE")
@@ -44,6 +44,14 @@ class BrookingsPipeline(object):
 
     @staticmethod
     def packaged_data(website, url, resource_urls, resource_type, content=""):
+        """打包MQ要求的数据格式
+        :param website:
+        :param url:
+        :param resource_urls:
+        :param resource_type:
+        :param content:
+        :return:
+        """
         data = {
             "PlatFrom": website,
             "newsContent": content,
@@ -54,7 +62,7 @@ class BrookingsPipeline(object):
         return json.dumps(data, ensure_ascii=False)
 
     def push_mq(self, item):
-        """
+        """推送到RabbitMQ
         :param item:
         """
         url = item.get("url")
@@ -109,6 +117,10 @@ class BrookingsPipeline(object):
             raise DropItem(e)
 
     def open_spider(self, spider):
+        """连接MQ
+        :param spider:
+        :return:
+        """
         if self.switch:
             self.connection = pika.BlockingConnection(pika.ConnectionParameters(host=self.host,
                                                                                 port=self.port,
@@ -121,5 +133,9 @@ class BrookingsPipeline(object):
             self.channel.queue_declare(queue=self.expert_queue, durable=True)  # 专家头像队列
 
     def close_spider(self, spider):
+        """关闭MQ
+        :param spider:
+        :return:
+        """
         if self.switch:
             self.connection.close()

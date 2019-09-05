@@ -166,7 +166,6 @@ class ExpertsSpider(scrapy.Spider):
         return data
 
     def parse_expert(self, response):
-        self.logger.warning(response.url)
         external_url = response.headers.get("Location")
         if external_url:
             external_url = external_url.decode()
