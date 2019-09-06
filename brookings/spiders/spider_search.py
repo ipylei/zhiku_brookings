@@ -6,7 +6,6 @@ import datetime
 import scrapy
 from scrapy.linkextractors import LinkExtractor
 
-from brookings.settings import PAGE_COUNT
 from brookings.config import parsing_rules
 from brookings.items import SearchItem, ExpertItem, AbandonItem, ExpertContactItem
 
@@ -25,6 +24,7 @@ class SearchSpider(scrapy.Spider):
     def __init__(self, name=None, **kwargs):
         super(SearchSpider, self).__init__(name, **kwargs)
         self.search_words = kwargs.get('search_words') if kwargs.get('search_words') else 'news'
+        self.page_size = kwargs.get('page_size') if kwargs.get('page_size') else 10
 
     def start_requests(self):
         start_url = self.basic_url.format(self.search_words)
@@ -36,7 +36,7 @@ class SearchSpider(scrapy.Spider):
         :return:
         """
         self.page_count += 1
-        if self.page_count <= PAGE_COUNT:
+        if self.page_count <= self.page_size:
             # 提取详情url
             item_le = LinkExtractor(restrict_xpaths=self.item_xpath_list)
             item_links = item_le.extract_links(response)
@@ -121,9 +121,6 @@ class SearchSpider(scrapy.Spider):
             pdf_file = json.dumps(pdf_file_dict, ensure_ascii=False)
         else:
             pdf_file = None
-
-        if response.url == 'https://www.brookings.edu/events/a-discussion-with-rep-mac-thornberry-on-military-readiness-modernization-and-innovation/':
-            print('hello world')
 
         data = {
             "title": title,

@@ -135,7 +135,5 @@ MQ_IMAGE_QUEUE = 'zk_img_task_queue'  # 内容图片队列
 MQ_EXPERT_QUEUE = 'zk_expert_img_task_queue'  # 专家头像队列
 # MQ_SWITCH = True  # 是否推入MQ
 
-# 翻页页数
-PAGE_COUNT = 10
 
 WEBSITE = '布鲁金斯学会'
