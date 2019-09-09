@@ -32,15 +32,28 @@ class SearchSeed(Base):
     content = Column(LONGTEXT, nullable=False, comment='内容')
     # 可有可无(含多个则都以";"隔开)
     keywords = Column(String(500), default='', comment='关键字')  # 含多个
-    description = Column(Text, default='', comment='描述')
-    editor = Column(String(500), default='', comment='编辑者')  # 含多个
     author = Column(String(500), default='', comment='作者')  # 含多个
-    topic = Column(String(500), default='', comment='主题')  # 含多个
-    top_img = Column(String(500), default='', comment='标题图片')
-    tag = Column(String(500), default='', comment='标签')  # 含多个
-    pdf_file = Column(Text, default='', comment='附件路径')  # 含多个
-
     category = Column(String(500), default='', comment='栏目')
+    # description = Column(Text, default='', comment='描述')
+    Abstract = Column(Text, default='', comment='摘要')
+    Platform = Column(Integer, default=0, comment='')
+    PEID = Column(Integer, default=0, comment='')
+    PNID = Column(String(500), default='', comment='')
+    PRCID = Column(String(500), default='', comment='')
+    MediaSource = Column(String(500), default='', comment='')
+    MediaSourceUrl = Column(String(500), default='', comment='')
+    ClickCount = Column(Integer, default=0, comment='')
+    CommentCount = Column(Integer, default=0, comment='')
+    CreateTime = Column(DateTime, default=time.localtime(), comment='创建时间')
+    ModifyTime = Column(DateTime, default=time.localtime(), comment='修改时间')
+    ForwardNum = Column(Integer, default=0, comment='')
+    LanguageCode = Column(String(500), default='', comment='')
+
+    # editor = Column(String(500), default='', comment='编辑者')  # 含多个
+    # topic = Column(String(500), default='', comment='主题')  # 含多个
+    # top_img = Column(String(500), default='', comment='标题图片')
+    # tag = Column(String(500), default='', comment='标签')  # 含多个
+    # pdf_file = Column(Text, default='', comment='附件路径')  # 含多个
 
     def save(self):
         Session.add(self)

@@ -61,12 +61,23 @@ class BrookingsPipeline(object):
         }
         return json.dumps(data, ensure_ascii=False)
 
+    @staticmethod
+    def packaged_item(item):
+        data = dict(item)
+        return data
+
     def push_mq(self, item):
         """推送到RabbitMQ
         :param item:
         """
-        url = item.get("url")
+        # pdf_file = item.pop("pdf_file")
 
+        # 推Item
+        # body = self.packaged_item(item)
+        # self.channel.basic_publish(exchange='', routing_key=self.file_queue, body=body)
+
+        # 推其他
+        url = item.get("url")
         # 1.推送搜索内容或者专家的附件到MQ
         pdf_file = item.get("pdf_file")
         if pdf_file:

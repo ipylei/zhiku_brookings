@@ -58,7 +58,7 @@ class SearchSpider(scrapy.Spider):
         :return:各字段组成的字典
         """
         title = response.xpath(parsing_rule_dict.get("title")).extract_first()
-        description = response.xpath(parsing_rule_dict.get("description")).extract_first()
+        Abstract = response.xpath(parsing_rule_dict.get("description")).extract_first()
         author = response.xpath(parsing_rule_dict.get("author")).extract()
         author = ';'.join(author)
         published_time = response.xpath('/html').re_first(parsing_rule_dict.get("published_time"))
@@ -83,7 +83,7 @@ class SearchSpider(scrapy.Spider):
             content = None
         data = {
             "title": title,
-            "description": description,
+            "Abstract": Abstract,
             "author": author,
             "publish_time": publish_time,
             "content": content
@@ -108,7 +108,7 @@ class SearchSpider(scrapy.Spider):
         else:
             publish_time = None
         content = response.xpath(parsing_rule_dict.get("content")).extract_first()
-        description = response.xpath(parsing_rule_dict.get("description")).extract_first()
+        Abstract = response.xpath(parsing_rule_dict.get("Abstract")).extract_first()
         topic = response.xpath(parsing_rule_dict.get("topic")).extract()
         topic = ';'.join(topic)
         keywords = response.xpath(parsing_rule_dict.get("keywords")).extract()
@@ -126,7 +126,7 @@ class SearchSpider(scrapy.Spider):
             "title": title,
             "publish_time": publish_time,
             "content": content,
-            "description": description,
+            "Abstract": Abstract,
             "topic": topic,
             "keywords": keywords,
             "author": author,
