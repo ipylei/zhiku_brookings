@@ -26,34 +26,37 @@ class SearchSeed(Base):
 
     id = Column(Integer, primary_key=True)
     # 必须有
-    url = Column(String(500), unique=True, nullable=False, comment='url')
-    title = Column(String(500), nullable=False, comment='标题')
-    publish_time = Column(DateTime, default=time.localtime(), comment='发布时间')
-    content = Column(LONGTEXT, nullable=False, comment='内容')
-    # 可有可无(含多个则都以";"隔开)
-    keywords = Column(String(500), default='', comment='关键字')  # 含多个
-    author = Column(String(500), default='', comment='作者')  # 含多个
-    category = Column(String(500), default='', comment='栏目')
-    # description = Column(Text, default='', comment='描述')
+    Url = Column(String(500), unique=True, nullable=False, comment='url')
+    Title = Column(String(500), nullable=False, comment='标题')
+    Author = Column(String(500), default='', comment='作者')  # 含多个
+    PublishTime = Column(DateTime, default=time.localtime(), comment='发布时间')
+    Keywords = Column(String(500), default='', comment='关键字')  # 含多个
     Abstract = Column(Text, default='', comment='摘要')
+    Content = Column(LONGTEXT, nullable=False, comment='内容')
+    # 可有可无(含多个则都以";"隔开)
+    Category = Column(String(500), default='', comment='栏目')
+    topic = Column(String(500), default='', comment='主题')  # 含多个
+    tags = Column(String(500), default='', comment='标签')  # 含多个
+    site_name = Column(String(500), default='', comment='网站名')
+
+    pdf_file = Column(Text, default='', comment='附件路径')  # 含多个
+
+    # editor = Column(String(500), default='', comment='编辑者')  # 含多个
+    # top_img = Column(String(500), default='', comment='标题图片')
+
     Platform = Column(Integer, default=0, comment='')
     PEID = Column(Integer, default=0, comment='')
     PNID = Column(String(500), default='', comment='')
     PRCID = Column(String(500), default='', comment='')
     MediaSource = Column(String(500), default='', comment='')
     MediaSourceUrl = Column(String(500), default='', comment='')
+
     ClickCount = Column(Integer, default=0, comment='')
     CommentCount = Column(Integer, default=0, comment='')
     CreateTime = Column(DateTime, default=time.localtime(), comment='创建时间')
     ModifyTime = Column(DateTime, default=time.localtime(), comment='修改时间')
     ForwardNum = Column(Integer, default=0, comment='')
     LanguageCode = Column(String(500), default='', comment='')
-
-    # editor = Column(String(500), default='', comment='编辑者')  # 含多个
-    # topic = Column(String(500), default='', comment='主题')  # 含多个
-    # top_img = Column(String(500), default='', comment='标题图片')
-    # tag = Column(String(500), default='', comment='标签')  # 含多个
-    # pdf_file = Column(Text, default='', comment='附件路径')  # 含多个
 
     def save(self):
         Session.add(self)
@@ -67,29 +70,30 @@ class ExpertsSeed(Base):
     id = Column(Integer, primary_key=True)
     # 必须有
     name = Column(String(255), unique=True, nullable=False, comment='姓名')
+    experts_url = Column(String(500), unique=True, nullable=False, comment='url')
+
     # 可有可无
-    head_portrait = Column(String(500), default='', comment='头像')
-    brief_introd = Column(Text, default='', comment='简介')
+    img_url = Column(String(500), default='', comment='头像')
+    abstract = Column(Text, default='', comment='简介')
     research_field = Column(Text, default='', comment='研究领域')  # 含多个
     job = Column(String(500), default='', comment='职务')  # 含多个
     education = Column(Text, default='', comment='学历')  # 含多个
-
-    # contact = Column(String(500), default='', comment='联系方式')  # 含多个
+    contact = Column(String(500), default='', comment='联系方式')  # 含多个
     reward = Column(Text, default='', comment='获奖')  # 含多个
     active_media = Column(String(500), default='', comment='活跃的媒体')  # 含多个,json格式
     relevant = Column(Text, default='', comment='相关计划')  # 含多个
+    createTime = Column(DateTime, default=time.localtime(), comment='创建时间')
 
-    pdf_file = Column(Text, default='', comment='附件路径')  # 含多个
-    url = Column(String(500), unique=True, nullable=False, comment='url')
+    # pdf_file = Column(Text, default='', comment='附件路径')  # 含多个
 
-    topics = Column(String(500), default='', comment='话题')  # 含多个
-    centers = Column(String(500), default='', comment='中心')  # 含多个
-    projects = Column(String(500), default='', comment='项目')  # 含多个
-    addition_areas = Column(Text, default='', comment='其他专业领域')
-    current_positions = Column(Text, default='', comment='目前的职位')  # 含多个
-    past_positions = Column(Text, default='', comment='过去的职位')  # 含多个
-    languages = Column(String(500), default='', comment='语言')  # 含多个
-    research_team = Column(String(500), default='', comment='研究团队')  # 含多个
+    # topics = Column(String(500), default='', comment='话题')  # 含多个
+    # centers = Column(String(500), default='', comment='中心')  # 含多个
+    # projects = Column(String(500), default='', comment='项目')  # 含多个
+    # addition_areas = Column(Text, default='', comment='其他专业领域')
+    # current_positions = Column(Text, default='', comment='目前的职位')  # 含多个
+    # past_positions = Column(Text, default='', comment='过去的职位')  # 含多个
+    # languages = Column(String(500), default='', comment='语言')  # 含多个
+    # research_team = Column(String(500), default='', comment='研究团队')  # 含多个
 
     def save(self):
         Session.add(self)

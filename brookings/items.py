@@ -9,45 +9,40 @@ import scrapy
 
 
 class SearchItem(scrapy.Item):
-    url = scrapy.Field()
-    title = scrapy.Field()
-    publish_time = scrapy.Field()
-    content = scrapy.Field()
-    keywords = scrapy.Field()  # 关键字
-    description = scrapy.Field()  # 描述
-    editor = scrapy.Field()  # 编辑者
-    author = scrapy.Field()
+    Url = scrapy.Field()
+    Title = scrapy.Field()
+    Author = scrapy.Field()
+    PublishTime = scrapy.Field()
+    Keywords = scrapy.Field()  # 关键字
+    Abstract = scrapy.Field()  # 描述
+    Content = scrapy.Field()
+    Category = scrapy.Field()
     topic = scrapy.Field()
-    top_img = scrapy.Field()  # 标题图片
-    tag = scrapy.Field()
+    tags = scrapy.Field()
+    site_name = scrapy.Field()
+
     pdf_file = scrapy.Field()
 
-    category = scrapy.Field()
+    # editor = scrapy.Field()  # 编辑者
+    # top_img = scrapy.Field()  # 标题图片
 
 
 class ExpertItem(scrapy.Item):
     name = scrapy.Field()
-    head_portrait = scrapy.Field()  # 头像
-    research_field = scrapy.Field()  # 研究领域
-    brief_introd = scrapy.Field()  # 简介
-    job = scrapy.Field()  # 职务
-    education = scrapy.Field()  # 学历
-    # contact = scrapy.Field()  # 联系方式
-    reward = scrapy.Field()  # 获奖
-    active_media = scrapy.Field()  # 活跃的媒体
-    relevant = scrapy.Field()  # 相关计划
+    experts_url = scrapy.Field()
 
-    url = scrapy.Field()
-    pdf_file = scrapy.Field()  # 附件地址
-
-    topics = scrapy.Field()
-    centers = scrapy.Field()
-    projects = scrapy.Field()
-    addition_areas = scrapy.Field()
-    current_positions = scrapy.Field()
-    past_positions = scrapy.Field()
-    languages = scrapy.Field()
-    research_team = scrapy.Field()
+    # 可有可无
+    img_url = scrapy.Field()
+    abstract = scrapy.Field()
+    research_field = scrapy.Field()
+    job = scrapy.Field()
+    education = scrapy.Field()
+    contact = scrapy.Field()
+    reward = scrapy.Field()
+    active_media = scrapy.Field()
+    createTime = scrapy.Field()
+    relevant = scrapy.Field()
+    # pdf_file = scrapy.Field()
 
 
 class ExpertContactItem(scrapy.Item):

@@ -125,15 +125,20 @@ MYSQL_USERNAME = 'root'
 MYSQL_PASSWORD = '123456'
 
 # RabbiMQ配置
-MQ_HOST = '10.4.7.44'
+# MQ_HOST = '10.4.7.44'
 # MQ_HOST = '127.0.0.1'
-MQ_USERNAME = 'guest'
-MQ_PASSWORD = 'guest'
+# MQ_USERNAME = 'guest'
+# MQ_PASSWORD = 'guest'
+
+MQ_HOST = '47.74.153.83'
+MQ_USERNAME = 'admin'
+MQ_PASSWORD = '123456'
 MQ_PORT = 5672
+MQ_NEWS_QUEUE = 'zk_news'  # 新闻队列
+MQ_EXPERT_QUEUE = 'zk_experts'  # 专家队列
 MQ_FILE_QUEUE = 'zk_file_task_queue'  # 附件队列
 MQ_IMAGE_QUEUE = 'zk_img_task_queue'  # 内容图片队列
-MQ_EXPERT_QUEUE = 'zk_expert_img_task_queue'  # 专家头像队列
-# MQ_SWITCH = True  # 是否推入MQ
-
+MQ_EXPERT_IMG_QUEUE = 'zk_expert_img_task_queue'  # 专家头像队列
+MQ_SWITCH = True  # 是否推入MQ
 
 WEBSITE = '布鲁金斯学会'
