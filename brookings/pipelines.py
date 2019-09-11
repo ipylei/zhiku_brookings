@@ -5,6 +5,7 @@
 # Don't forget to add your pipeline to the ITEM_PIPELINES setting
 # See: https://doc.scrapy.org/en/latest/topics/item-pipeline.html
 import json
+import time
 
 import pika
 from scrapy.exceptions import DropItem
@@ -12,6 +13,29 @@ from scrapy.http import HtmlResponse
 
 from brookings.items import SearchItem, ExpertItem, AbandonItem, ExpertContactItem
 from brookings.models import Session, SearchSeed, ExpertsSeed, AbandonSeed, ExpertContactSeed
+
+DataSource_Dict = {
+    "论坛": 1, "forum": 1,
+    "微博": 2, "weibo": 2,
+    "微信公众号": 3, "weixin": 3,
+    "QQ群消息": 4, "qqqunmsg": 4,
+    "新闻": 5, "news": 5,
+    "博客": 6, "blog": 6,
+    "贴吧": 7, "tieba": 7,
+    "twitter": 8,
+    "facebook": 9,
+    "电子报刊": 10,
+    "app": 11,
+    "微信群": 12,
+    "WhatsApp": 13,
+    "line": 14,
+    "telegram": 15,
+    "搜索引擎": 16,
+    "研究": 17,
+    "报告": 18,
+    "暗网": 20,
+    "其它": 0, "others": 0
+}
 
 
 class BrookingsPipeline(object):
@@ -98,8 +122,8 @@ class BrookingsPipeline(object):
 
                 "ClickCount": 0,
                 "CommentCount": 0,
-                "CreateTime": "",
-                "ModifyTime": "",
+                "CreateTime": time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time())),
+                "ModifyTime": time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time())),
                 "ForwardNum": 0,
                 "LanguageCode": ""
             }
@@ -127,6 +151,7 @@ class BrookingsPipeline(object):
                 "Platform": 1271
             },
             "experts": [{
+                "createTime": time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time())),
             }],
             "ListComments": ""
         }

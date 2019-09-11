@@ -153,7 +153,7 @@ class ExpertsSpider(scrapy.Spider):
             "reward": "",
             "active_media": active_media if active_media else "",
             "relevant": "",
-            "createTime": "",
+            # "createTime": "",
             # "pdf_file": pdf_file,
         }
         if last_dt_field:

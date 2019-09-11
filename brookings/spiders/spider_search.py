@@ -2,6 +2,7 @@
 import json
 import re
 import datetime
+import time
 
 import scrapy
 from scrapy.linkextractors import LinkExtractor
@@ -284,7 +285,7 @@ class SearchSpider(scrapy.Spider):
             "reward": "",
             "active_media": active_media if active_media else "",
             "relevant": "",
-            "createTime": "",
+            # "createTime": time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time())),
             # "pdf_file": pdf_file,
         }
         if last_dt_field:
