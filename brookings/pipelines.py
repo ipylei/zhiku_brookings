@@ -31,10 +31,9 @@ DataSource_Dict = {
     "line": 14,
     "telegram": 15,
     "搜索引擎": 16,
-    "研究": 17,
+    "研究": 17, "research": 17,
     "报告": 18,
     "暗网": 20,
-    "其它": 0, "others": 0
 }
 
 
@@ -130,6 +129,11 @@ class BrookingsPipeline(object):
             ],
             "ListComments": ""
         }
+        data_source = item.get("DataSource")
+        if data_source and data_source.lower() in DataSource_Dict:
+            item["DataSource"] = DataSource_Dict.get(data_source.lower())
+        else:
+            item["DataSource"] = 0
         data['ListNews'][0].update(item)
         return json.dumps(data, ensure_ascii=False)
 

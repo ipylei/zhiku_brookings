@@ -14,12 +14,8 @@ from brookings.settings import WEBSITE
 
 class SearchSpider(scrapy.Spider):
     name = 'search_spider'
-
     page_count = 0
     basic_url = 'https://www.brookings.edu/search/?s={}'
-    item_xpath_list = [
-        "//div[@class='list-content']/article//a[@class='event-content']",  # events
-        "//div[@class='list-content']/article//h4[@class='title']/a", ]
 
     # allowed_domains = ['brookings.edu']
 
@@ -40,12 +36,16 @@ class SearchSpider(scrapy.Spider):
         self.page_count += 1
         if self.page_count <= self.page_size:
             # 提取详情url
-            item_le = LinkExtractor(restrict_xpaths=self.item_xpath_list)
-            item_links = item_le.extract_links(response)
-            if item_links:
-                for link in item_links:
-                    yield scrapy.Request(url=link.url, callback=self.parse_detail,
-                                         meta={'dont_redirect': False, 'handle_httpstatus_list': [302]})
+            item_selectors = response.xpath("//div[@class='list-content']/article")
+            if item_selectors:
+                for selector in item_selectors:
+                    url = selector.xpath(".//h4[@class='title']/a/@href").extract_first()
+                    data_source = selector.xpath(".//a[@class='label']/text()").extract_first()
+                    yield scrapy.Request(url=url, callback=self.parse_detail,
+                                         meta={'dont_redirect': False,
+                                               'handle_httpstatus_list': [302],
+                                               'data_source': data_source
+                                               })
                     # yield scrapy.Request(url=link.url, callback=self.parse_detail)
             # 提取出下一页url
             next_url = response.xpath("//a[@class='load-more']/@href").extract_first()
@@ -308,16 +308,17 @@ class SearchSpider(scrapy.Spider):
                 parsing_rule_dict = parsing_rules.get(category)
                 if category in parsing_rules and category != "experts":  # 非专家
                     data = self._get_item_data(category, parsing_rule_dict, response)
+                    data["DataSource"] = response.meta.get("data_source")
                     item = SearchItem(**data)
                     yield item
                 elif category in parsing_rules and category == "experts":  # 专家
                     data = self._get_experts_data(parsing_rule_dict, response)
-                    contacts = data.pop("contact")
+                    # contacts = data.pop("contact")
                     item = ExpertItem(**data)
-                    for key, value in contacts.items():
-                        contact_data = {"url": response.url, "name": data.get("name"), "type": key, "contact": value}
-                        item2 = ExpertContactItem(**contact_data)
-                        yield item2  # 联系方式
+                    # for key, value in contacts.items():
+                    #     contact_data = {"url": response.url, "name": data.get("name"), "type": key, "contact": value}
+                    #     item2 = ExpertContactItem(**contact_data)
+                    #     yield item2  # 联系方式
                     yield item
                 # else:  # category未在解析规则中
                 #     data = {"status_code": response.status, "internal_url": response.url, "external_url": external_url}
