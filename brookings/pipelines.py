@@ -94,8 +94,7 @@ class BrookingsPipeline(object):
         }
         return json.dumps(data, ensure_ascii=False)
 
-    @staticmethod
-    def packaged_search(item):
+    def packaged_search(self, item):
         data = {
             "DBAttributeValue": {
                 "DataType": 0,
@@ -124,7 +123,8 @@ class BrookingsPipeline(object):
                 "CreateTime": time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time())),
                 "ModifyTime": time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time())),
                 "ForwardNum": 0,
-                "LanguageCode": ""
+                "LanguageCode": "",
+                "site_name": self.website
             }
             ],
             "ListComments": ""
@@ -137,8 +137,7 @@ class BrookingsPipeline(object):
         data['ListNews'][0].update(item)
         return json.dumps(data, ensure_ascii=False)
 
-    @staticmethod
-    def packaged_expert(item):
+    def packaged_expert(self, item):
         data = {
             "DBAttributeValue": {
                 "DataType": 0,
@@ -156,6 +155,7 @@ class BrookingsPipeline(object):
             },
             "experts": [{
                 "createTime": time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time())),
+                "site_name": self.website
             }],
             "ListComments": ""
         }

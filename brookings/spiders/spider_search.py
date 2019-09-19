@@ -9,7 +9,6 @@ from scrapy.linkextractors import LinkExtractor
 
 from brookings.config import parsing_rules
 from brookings.items import SearchItem, ExpertItem, AbandonItem, ExpertContactItem
-from brookings.settings import WEBSITE
 
 
 class SearchSpider(scrapy.Spider):
@@ -153,7 +152,7 @@ class SearchSpider(scrapy.Spider):
             data = self._parse_category2(parsing_rule_dict, response)
         data['Url'] = response.url
         data['Category'] = category
-        data['site_name'] = WEBSITE
+        # data['site_name'] = WEBSITE
         return data
 
     @staticmethod
