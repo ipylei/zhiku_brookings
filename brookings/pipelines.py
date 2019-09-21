@@ -39,17 +39,21 @@ DataSource_Dict = {
 
 class BrookingsPipeline(object):
 
-    def __init__(self, host, username, password, port,
+    def __init__(self,
+                 # host,
+                 # username,
+                 # password,
+                 # port,
                  news_queue,
                  expert_queue,
                  file_queue,
                  image_queue,
                  expert_img_queue,
                  switch, website):
-        self.host = host
-        self.username = username
-        self.password = password
-        self.port = port
+        # self.host = host
+        # self.username = username
+        # self.password = password
+        # self.port = port
 
         self.news_queue = news_queue
         self.expert_queue = expert_queue
@@ -62,10 +66,10 @@ class BrookingsPipeline(object):
     @classmethod
     def from_crawler(cls, crawler):
         return cls(
-            host=crawler.settings.get("MQ_HOST"),
-            username=crawler.settings.get("MQ_USERNAME"),
-            password=crawler.settings.get("MQ_PASSWORD"),
-            port=crawler.settings.get("MQ_PORT"),
+            # host=crawler.settings.get("MQ_HOST"),
+            # username=crawler.settings.get("MQ_USERNAME"),
+            # password=crawler.settings.get("MQ_PASSWORD"),
+            # port=crawler.settings.get("MQ_PORT"),
             news_queue=crawler.settings.get("MQ_NEWS_QUEUE"),
             expert_queue=crawler.settings.get("MQ_EXPERT_QUEUE"),
             file_queue=crawler.settings.get("MQ_FILE_QUEUE"),
@@ -112,28 +116,33 @@ class BrookingsPipeline(object):
             },
             "ListNews": [{
                 "Platform": 0,
+                "DataSource": 17,
                 "PEID": 0,
                 "PNID": "",
                 "PRCID": "",
                 "MediaSource": "",
                 "MediaSourceUrl": "",
-
+                # ...
                 "ClickCount": 0,
                 "CommentCount": 0,
                 "CreateTime": time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time())),
                 "ModifyTime": time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time())),
                 "ForwardNum": 0,
-                "LanguageCode": "",
-                "site_name": self.website
+                "LanguageCode": "en",
+                "site_name": "brookings.edu",
+                "country": self.website,
+                "base_class_type": 7
+
             }
             ],
             "ListComments": ""
         }
-        data_source = item.get("DataSource")
-        if data_source and data_source.lower() in DataSource_Dict:
-            item["DataSource"] = DataSource_Dict.get(data_source.lower())
-        else:
-            item["DataSource"] = 0
+        data_source = item.pop("DataSource")
+        # data_source = item.get("DataSource")
+        # if data_source and data_source.lower() in DataSource_Dict:
+        #     item["DataSource"] = DataSource_Dict.get(data_source.lower())
+        # else:
+        #     item["DataSource"] = 17
         data['ListNews'][0].update(item)
         return json.dumps(data, ensure_ascii=False)
 
@@ -233,6 +242,12 @@ class BrookingsPipeline(object):
         :param spider:
         :return:
         """
+
+        self.host = spider.mq_host
+        self.port = spider.mq_port
+        self.username = spider.mq_username
+        self.password = spider.mq_password
+
         if self.switch:
             self.connection = pika.BlockingConnection(pika.ConnectionParameters(host=self.host,
                                                                                 port=self.port,

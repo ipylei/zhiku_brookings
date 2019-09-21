@@ -18,10 +18,29 @@ class SearchSpider(scrapy.Spider):
 
     # allowed_domains = ['brookings.edu']
 
-    def __init__(self, name=None, **kwargs):
-        super(SearchSpider, self).__init__(name, **kwargs)
-        self.keyword = kwargs.get('keyword') if kwargs.get('keyword') else 'news'
-        self.page_size = kwargs.get('page_size') if kwargs.get('page_size') else 10
+    # def __init__(self, name=None, **kwargs):
+    #     super(SearchSpider, self).__init__(name, **kwargs)
+    #     self.keyword = kwargs.get('keyword') if kwargs.get('keyword') else 'china'
+    #     self.page_size = kwargs.get('page_size') if kwargs.get('page_size') else 10
+
+    def __init__(self,
+                 keyword='china',
+                 page_size=10,
+                 mq_host='10.4.9.177',
+                 mq_username='admin',
+                 mq_password='123456',
+                 # mq_host='127.0.0.1',
+                 # mq_username='guest',
+                 # mq_password='guest',
+
+                 mq_port=5672, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.keyword = keyword
+        self.page_size = page_size
+        self.mq_host = mq_host
+        self.mq_port = mq_port
+        self.mq_username = mq_username
+        self.mq_password = mq_password
 
     def start_requests(self):
         start_url = self.basic_url.format(self.keyword)
@@ -128,7 +147,7 @@ class SearchSpider(scrapy.Spider):
 
         data = {
             "Title": title if title else "",
-            "Author": author if author else author,
+            "Author": author if author else "",
             "PublishTime": publish_time if publish_time else "",
             "Keywords": keywords if keywords else "",
             "Abstract": description if description else "",
