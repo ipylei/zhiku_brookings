@@ -129,8 +129,8 @@ class BrookingsPipeline(object):
                 "ModifyTime": time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time())),
                 "ForwardNum": 0,
                 "LanguageCode": "en",
-                "site_name": "brookings.edu",
-                "country": self.website,
+                "site_name": self.website,
+                "country": '美国',
                 "base_class_type": 7
 
             }
