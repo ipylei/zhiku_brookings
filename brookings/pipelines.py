@@ -209,6 +209,7 @@ class BrookingsPipeline(object):
 
         # 3.推送专家头像(图片)
         head_portrait = item.get("img_url")
+        url = item.get("experts_url")
         if head_portrait:
             body = self.packaged_data(website=self.website, url=url, resource_urls=[head_portrait],
                                       resource_type="Picture")
