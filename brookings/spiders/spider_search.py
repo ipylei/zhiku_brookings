@@ -25,6 +25,8 @@ class SearchSpider(scrapy.Spider):
 
     def __init__(self,
                  keyword='china',
+                 # keyword='event',
+
                  page_size=10,
                  mq_host='10.4.9.177',
                  mq_username='admin',
@@ -32,8 +34,8 @@ class SearchSpider(scrapy.Spider):
                  # mq_host='127.0.0.1',
                  # mq_username='guest',
                  # mq_password='guest',
-
-                 mq_port=5672, *args, **kwargs):
+                 mq_port=5672,
+                 *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.keyword = keyword
         self.page_size = page_size
@@ -58,12 +60,14 @@ class SearchSpider(scrapy.Spider):
             if item_selectors:
                 for selector in item_selectors:
                     url = selector.xpath(".//h4[@class='title']/a/@href").extract_first()
-                    data_source = selector.xpath(".//a[@class='label']/text()").extract_first()
-                    yield scrapy.Request(url=url, callback=self.parse_detail,
-                                         meta={'dont_redirect': False,
-                                               'handle_httpstatus_list': [302],
-                                               'data_source': data_source
-                                               })
+                    if url:
+                        data_source = selector.xpath(".//a[@class='label']/text()").extract_first()
+                        yield scrapy.Request(url=url, callback=self.parse_detail,
+                                             meta={'dont_redirect': False,
+                                                   'handle_httpstatus_list': [302],
+                                                   'data_source': data_source
+                                                   })
+
                     # yield scrapy.Request(url=link.url, callback=self.parse_detail)
             # 提取出下一页url
             next_url = response.xpath("//a[@class='load-more']/@href").extract_first()
@@ -139,6 +143,7 @@ class SearchSpider(scrapy.Spider):
         author = response.xpath(parsing_rule_dict.get("author")).extract()
         author = ','.join(author)
         pdf_urls = response.xpath(parsing_rule_dict.get("pdf_file")).extract()
+        pdf_urls = [pdf_url for pdf_url in pdf_urls if re.search('pdf$', pdf_url)]
         pdf_file_dict = {'附件': pdf_urls}
         if pdf_file_dict.get('附件'):
             pdf_file = json.dumps(pdf_file_dict, ensure_ascii=False)

@@ -116,7 +116,7 @@ class BrookingsPipeline(object):
             },
             "ListNews": [{
                 "Platform": 0,
-                "DataSource": 17,
+                "DataSource": 5,
                 "PEID": 0,
                 "PNID": "",
                 "PRCID": "",
@@ -188,7 +188,7 @@ class BrookingsPipeline(object):
 
         # 推其他
         url = item.get("Url")
-        # 1.推送搜索内容或者专家的附件到MQ
+        # 1.推送搜索内容的附件到MQ
         # pdf_file = item.get("pdf_file")
         if pdf_file:
             pdf_file_list = json.loads(pdf_file).get("附件")
