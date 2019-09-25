@@ -131,7 +131,7 @@ class BrookingsPipeline(object):
                 "LanguageCode": "en",
                 "site_name": self.website,
                 "country": '美国',
-                "base_class_type": 7
+                "base_class_type": 6
 
             }
             ],
@@ -175,45 +175,46 @@ class BrookingsPipeline(object):
         """推送到RabbitMQ
         :param item:
         """
-        pdf_file = item.pop("pdf_file") if item.get('pdf_file') else None
 
         # 推搜索
         if isinstance(item, SearchItem):
-            body = self.packaged_search(item)
-            self.channel.basic_publish(exchange='', routing_key=self.news_queue, body=body)
+            if item.get('Content'):
+                body = self.packaged_search(item)
+                self.channel.basic_publish(exchange='', routing_key=self.news_queue, body=body)
+
+                # 推其他
+                url = item.get("Url")
+                # 1.推送内容中的图片
+                content = item.get("Content")
+                if content:
+                    response = HtmlResponse(url=url, body=content, encoding='utf8')
+                    img_list = response.xpath("//img/@src").extract()
+                    if img_list:
+                        image_list = [response.urljoin(img_url) for img_url in img_list]
+                        body = self.packaged_data(website=self.website, url=url, resource_urls=image_list,
+                                                  resource_type="Picture", content=content)
+                        self.channel.basic_publish(exchange='', routing_key=self.image_queue, body=body)
+
+                # 2.推送搜索内容的附件到MQ
+                pdf_file = item.pop("pdf_file") if item.get('pdf_file') else None
+                if pdf_file:
+                    pdf_file_list = json.loads(pdf_file).get("附件")
+                    body = self.packaged_data(website=self.website, url=url, resource_urls=pdf_file_list,
+                                              resource_type="Pdf")
+                    self.channel.basic_publish(exchange='', routing_key=self.file_queue, body=body)
+
         # 推专家
         elif isinstance(item, ExpertItem):
             body = self.packaged_expert(item)
             self.channel.basic_publish(exchange='', routing_key=self.expert_queue, body=body)
 
-        # 推其他
-        url = item.get("Url")
-        # 1.推送搜索内容的附件到MQ
-        # pdf_file = item.get("pdf_file")
-        if pdf_file:
-            pdf_file_list = json.loads(pdf_file).get("附件")
-            body = self.packaged_data(website=self.website, url=url, resource_urls=pdf_file_list,
-                                      resource_type="Pdf")
-            self.channel.basic_publish(exchange='', routing_key=self.file_queue, body=body)
-
-        # 2.推送内容中的图片
-        content = item.get("Content")
-        if content:
-            response = HtmlResponse(url=url, body=content, encoding='utf8')
-            img_list = response.xpath("//img/@src").extract()
-            if img_list:
-                image_list = [response.urljoin(img_url) for img_url in img_list]
-                body = self.packaged_data(website=self.website, url=url, resource_urls=image_list,
-                                          resource_type="Picture", content=content)
-                self.channel.basic_publish(exchange='', routing_key=self.image_queue, body=body)
-
-        # 3.推送专家头像(图片)
-        head_portrait = item.get("img_url")
-        url = item.get("experts_url")
-        if head_portrait:
-            body = self.packaged_data(website=self.website, url=url, resource_urls=[head_portrait],
-                                      resource_type="Picture")
-            self.channel.basic_publish(exchange='', routing_key=self.expert_img_queue, body=body)
+            # 3.推送专家头像(图片)
+            head_portrait = item.get("img_url")
+            url = item.get("experts_url")
+            if head_portrait:
+                body = self.packaged_data(website=self.website, url=url, resource_urls=[head_portrait],
+                                          resource_type="Picture")
+                self.channel.basic_publish(exchange='', routing_key=self.expert_img_queue, body=body)
 
     def process_item(self, item, spider):
         # try:
