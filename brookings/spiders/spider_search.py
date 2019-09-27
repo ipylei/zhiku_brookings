@@ -38,9 +38,9 @@ class SearchSpider(scrapy.Spider):
                  *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.keyword = keyword
-        self.page_size = page_size
+        self.page_size = int(page_size)
         self.mq_host = mq_host
-        self.mq_port = mq_port
+        self.mq_port = int(mq_port)
         self.mq_username = mq_username
         self.mq_password = mq_password
 
@@ -143,7 +143,7 @@ class SearchSpider(scrapy.Spider):
         author = response.xpath(parsing_rule_dict.get("author")).extract()
         author = ','.join(author)
         pdf_urls = response.xpath(parsing_rule_dict.get("pdf_file")).extract()
-        pdf_urls = [pdf_url for pdf_url in pdf_urls if re.search('pdf$', pdf_url)]
+        pdf_urls = [response.urljoin(pdf_url) for pdf_url in pdf_urls if re.search('pdf$', pdf_url)]
         pdf_file_dict = {'附件': pdf_urls}
         if pdf_file_dict.get('附件'):
             pdf_file = json.dumps(pdf_file_dict, ensure_ascii=False)
@@ -299,7 +299,7 @@ class SearchSpider(scrapy.Spider):
         data = {
             "name": name,
             "experts_url": response.url,
-            "img_url": head_portrait if head_portrait else "",
+            "img_url": response.urljoin(head_portrait) if head_portrait else "",
             "abstract": brief_introd if brief_introd else "",
             "research_field": research_field if research_field else "",
             "job": job if job else "",

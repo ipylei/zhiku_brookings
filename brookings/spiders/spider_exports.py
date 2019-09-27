@@ -26,9 +26,9 @@ class ExpertsSpider(scrapy.Spider):
                  mq_port=5672, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.keyword = keyword
-        self.page_size = page_size
+        self.page_size = int(page_size)
         self.mq_host = mq_host
-        self.mq_port = mq_port
+        self.mq_port = int(mq_port)
         self.mq_username = mq_username
         self.mq_password = mq_password
 
@@ -163,7 +163,7 @@ class ExpertsSpider(scrapy.Spider):
         data = {
             "name": name,
             "experts_url": response.url,
-            "img_url": head_portrait if head_portrait else "",
+            "img_url": response.urljoin(head_portrait) if head_portrait else "",
             "abstract": brief_introd if brief_introd else "",
             "research_field": research_field if research_field else "",
             "job": job if job else "",
