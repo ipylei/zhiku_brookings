@@ -1,11 +1,12 @@
 # -*- coding: utf-8 -*-
 import json
 import re
+import datetime
 
 import scrapy
 
 from brookings.config import parsing_rules
-from brookings.items import ExpertItem, ExpertContactItem, AbandonItem
+from brookings.items import ExpertItem, ExpertContactItem, AbandonItem, SearchItem
 
 
 class ExpertsSpider(scrapy.Spider):
@@ -193,15 +194,167 @@ class ExpertsSpider(scrapy.Spider):
                 # contacts = data.pop("contact")
                 item = ExpertItem(**data)
                 yield item
-                # for key, value in contacts.items():
-                #     contact_data = {"url": response.url, "name": data.get("name"), "type": key, "contact": value}
-                #     item2 = ExpertContactItem(**contact_data)
-                #     yield item2  # 联系方式
-        #     else:
-        #         data = {"status_code": response.status, "internal_url": response.url, "external_url": external_url}
-        #         item = AbandonItem(**data)
-        #         yield item
-        # else:
+
+                # todo 采集专家发布的文章
+                category_urls = response.xpath(
+                    "//section[contains(@class,'module-secondary')]//a[@class='view-all']/@href").extract()
+                for url in category_urls:
+                    yield scrapy.Request(url=url, callback=self.parse_article_url)
+
+    def parse_article_url(self, response):
+        """提取出专家发布的文章url"""
+        urls = response.xpath("//div[@class='list-content']/article//h4[@class='title']/a/@href").extract()
+        for url in urls:
+            yield scrapy.Request(url=url, callback=self.parse_detail,
+                                 meta={'dont_redirect': False,
+                                       'handle_httpstatus_list': [302],
+                                       'data_source': 5})
+        # 提取出下一页url
+        next_url = response.xpath("//a[@class='load-more']/@href").extract_first()
+        if next_url:
+            yield scrapy.Request(url=next_url, callback=self.parse_article_url)
+
+    @staticmethod
+    def _parse_category1(parsing_rule_dict, response):
+        """ 解析 essay
+        :param parsing_rule_dict:
+        :param response:
+        :return:各字段组成的字典
+        """
+        title = response.xpath(parsing_rule_dict.get("title")).extract_first()
+        description = response.xpath(parsing_rule_dict.get("description")).extract_first()
+        author = response.xpath(parsing_rule_dict.get("author")).extract()
+        author = ','.join(author)
+        published_time = response.xpath('/html').re_first(parsing_rule_dict.get("published_time"))
+        if not published_time:
+            published_time = response.xpath(parsing_rule_dict.get("publish_time")).extract_first()
+        published_time = re.search('\d+-\d+-\d+.*?\d+:\d+:\d+.*?', published_time).group()
+        if published_time:
+            published_time = re.sub('[^\d\-:]+', ' ', published_time, re.S)
+            publish_time = str(datetime.datetime.strptime(published_time, '%Y-%m-%d %H:%M:%S'))
+        else:
+            publish_time = ""
+        content = response.xpath(parsing_rule_dict.get("content")).extract_first()
+        if content:
+            # 替换字符串(末尾)
+            content = content.replace('<section class="author">', '￥')
+            content = re.search('[\s\S]+<section class="info">[\s\S]+</section>([\s\S]+)￥?', content)
+            if content:
+                content = ''.join(content.group(1))
+            else:
+                content = ""
+        else:
+            content = ""
+        data = {
+            "Title": title if title else title,
+            "Author": author if author else author,
+            "PublishTime": publish_time if publish_time else publish_time,
+            "Keywords": "",
+            "Abstract": description if description else description,
+            "Content": content if content else content,
+            "topic": "",
+            "tags": "",
+        }
+        return data
+
+    @staticmethod
+    def _parse_category2(parsing_rule_dict, response):
+        """解析 除essay、experts
+        :param parsing_rule_dict:
+        :param response:
+        :return: 各字段组成的字典
+        """
+        title = response.xpath(parsing_rule_dict.get("title")).extract_first()
+        published_time = response.xpath('/html').re_first(parsing_rule_dict.get("published_time"))
+        if not published_time:
+            published_time = response.xpath(parsing_rule_dict.get("publish_time")).extract_first()
+        published_time = re.search('\d+-\d+-\d+.*?\d+:\d+:\d+.*?', published_time).group()
+        if published_time:
+            published_time = re.sub('[^\d\-:]+', ' ', published_time, re.S)
+            publish_time = str(datetime.datetime.strptime(published_time, '%Y-%m-%d %H:%M:%S'))
+        else:
+            publish_time = ""
+        content = response.xpath(parsing_rule_dict.get("content")).extract_first()
+        description = response.xpath(parsing_rule_dict.get("description")).extract_first()
+        topic = response.xpath(parsing_rule_dict.get("topic")).extract()
+        topic = ','.join(topic)
+        keywords = response.xpath(parsing_rule_dict.get("keywords")).extract()
+        keywords = ','.join(keywords)
+        author = response.xpath(parsing_rule_dict.get("author")).extract()
+        author = ','.join(author)
+        pdf_urls = response.xpath(parsing_rule_dict.get("pdf_file")).extract()
+        pdf_urls = [response.urljoin(pdf_url) for pdf_url in pdf_urls if re.search('pdf$', pdf_url)]
+        pdf_file_dict = {'附件': pdf_urls}
+        if pdf_file_dict.get('附件'):
+            pdf_file = json.dumps(pdf_file_dict, ensure_ascii=False)
+        else:
+            pdf_file = ""
+
+        data = {
+            "Title": title if title else "",
+            "Author": author if author else "",
+            "PublishTime": publish_time if publish_time else "",
+            "Keywords": keywords if keywords else "",
+            "Abstract": description if description else "",
+            "Content": content if content else "",
+            "topic": topic if topic else "",
+            "tags": "",
+            "pdf_file": pdf_file
+        }
+        return data
+
+    def _get_item_data(self, category, parsing_rule_dict, response):
+        """解析非专家页面
+        :param category: 种类
+        :param parsing_rule_dict: 对应的解析规则字典
+        :param response: 该页面响应
+        :return: 各字段构造成的字典
+        """
+        if category == "essay":
+            data = self._parse_category1(parsing_rule_dict, response)
+        else:
+            data = self._parse_category2(parsing_rule_dict, response)
+        data['Url'] = response.url
+        data['Category'] = category
+        # data['site_name'] = WEBSITE
+        return data
+
+    def parse_detail(self, response):
+        # external_url = response.headers.get("Location")
+        # if external_url:
+        #     external_url = external_url.decode()
+        # if response.status == 302:
+        #     data = {"status_code": response.status, "internal_url": response.url, "external_url": external_url}
+        #     item = AbandonItem(**data)
+        #     yield item
+        if response.status == 200:
+            category = re.search('.*?brookings.edu/(.*?)/\S+', response.url)
+            if category:
+                category = category.group(1)
+                parsing_rule_dict = parsing_rules.get(category)
+                if category in parsing_rules and category != "experts":  # 非专家
+                    data = self._get_item_data(category, parsing_rule_dict, response)
+                    data["DataSource"] = response.meta.get("data_source")
+                    item = SearchItem(**data)
+                    yield item
+                elif category in parsing_rules and category == "experts":  # 专家
+                    data = self._get_experts_data(parsing_rule_dict, response)
+                    # contacts = data.pop("contact")
+                    item = ExpertItem(**data)
+                    # for key, value in contacts.items():
+                    #     contact_data = {"url": response.url, "name": data.get("name"), "type": key, "contact": value}
+                    #     item2 = ExpertContactItem(**contact_data)
+                    #     yield item2  # 联系方式
+                    yield item
+                # else:  # category未在解析规则中
+                #     data = {"status_code": response.status, "internal_url": response.url, "external_url": external_url}
+                #     item = AbandonItem(**data)
+                #     yield item
+            # else:  # 没有category的情况
+            #     data = {"status_code": response.status, "internal_url": response.url, "external_url": external_url}
+            #     item = AbandonItem(**data)
+            #     yield item
+        # else:  # 其他响应码
         #     data = {"status_code": response.status, "internal_url": response.url, "external_url": external_url}
         #     item = AbandonItem(**data)
         #     yield item
