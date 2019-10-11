@@ -28,7 +28,8 @@ class SearchSpider(scrapy.Spider):
                  # keyword='event',
 
                  page_size=10,
-                 mq_host='10.4.9.177',
+                 # mq_host='10.4.9.177',
+                 mq_host='39.98.176.208',
                  mq_username='admin',
                  mq_password='123456',
                  # mq_host='127.0.0.1',
