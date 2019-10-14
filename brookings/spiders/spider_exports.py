@@ -10,7 +10,7 @@ from brookings.items import ExpertItem, ExpertContactItem, AbandonItem, SearchIt
 
 
 class ExpertsSpider(scrapy.Spider):
-    name = 'expert_spider'
+    name = 'spider_expert'
     allowed_domains = ['brookings.edu']
     start_urls = ['https://www.brookings.edu/experts/']
 
@@ -170,7 +170,7 @@ class ExpertsSpider(scrapy.Spider):
             "research_field": research_field if research_field else "",
             "job": job if job else "",
             "education": education if education else "",
-            "contact": [contact] if contact else "",
+            "contact": [contact] if contact else [],
             "reward": "",
             "active_media": active_media if active_media else "",
             "relevant": "",
@@ -197,10 +197,10 @@ class ExpertsSpider(scrapy.Spider):
                 yield item
 
                 # todo 采集专家发布的文章
-                category_urls = response.xpath(
-                    "//section[contains(@class,'module-secondary')]//a[@class='view-all']/@href").extract()
-                for url in category_urls:
-                    yield scrapy.Request(url=url, callback=self.parse_article_url)
+                # category_urls = response.xpath(
+                #     "//section[contains(@class,'module-secondary')]//a[@class='view-all']/@href").extract()
+                # for url in category_urls:
+                #     yield scrapy.Request(url=url, callback=self.parse_article_url)
 
     def parse_article_url(self, response):
         """提取出专家发布的文章url"""

@@ -12,7 +12,7 @@ from brookings.items import SearchItem, ExpertItem, AbandonItem, ExpertContactIt
 
 
 class SearchSpider(scrapy.Spider):
-    name = 'search_spider'
+    name = 'spider_search'
     page_count = 0
     basic_url = 'https://www.brookings.edu/search/?s={}'
 
@@ -24,10 +24,10 @@ class SearchSpider(scrapy.Spider):
     #     self.page_size = kwargs.get('page_size') if kwargs.get('page_size') else 10
 
     def __init__(self,
-                 keyword='china',
-                 # keyword='event',
+                 # keyword='china',
+                 keyword='event',
 
-                 page_size=10,
+                 page_size=100,
                  # mq_host='10.4.9.177',
                  mq_host='39.98.176.208',
                  mq_username='admin',
