@@ -131,7 +131,7 @@ class BrookingsPipeline(object):
                 "LanguageCode": "en",
                 "site_name": self.website,
                 "country": '美国',
-                "base_class_type": 6
+                "base_class_type": 7
 
             }
             ],
