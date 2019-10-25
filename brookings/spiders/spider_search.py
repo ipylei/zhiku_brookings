@@ -25,7 +25,8 @@ class SearchSpider(scrapy.Spider):
 
     def __init__(self,
                  # keyword='china',
-                 keyword='event',
+                 # keyword='event',
+                 keyword='china events',
 
                  page_size=100,
                  # mq_host='10.4.9.177',
@@ -46,6 +47,8 @@ class SearchSpider(scrapy.Spider):
         self.mq_password = mq_password
 
     def start_requests(self):
+        # keywords = self.keyword.split(' ')
+        # for keyword in keywords:
         start_url = self.basic_url.format(self.keyword)
         yield scrapy.Request(url=start_url)
 
@@ -107,12 +110,12 @@ class SearchSpider(scrapy.Spider):
         else:
             content = ""
         data = {
-            "Title": title if title else title,
-            "Author": author if author else author,
-            "PublishTime": publish_time if publish_time else publish_time,
+            "Title": title or "",
+            "Author": author or "",
+            "PublishTime": publish_time,
             "Keywords": "",
-            "Abstract": description if description else description,
-            "Content": content if content else content,
+            "Abstract": description or "",
+            "Content": content or "",
             "topic": "",
             "tags": "",
         }
@@ -152,13 +155,13 @@ class SearchSpider(scrapy.Spider):
             pdf_file = ""
 
         data = {
-            "Title": title if title else "",
-            "Author": author if author else "",
-            "PublishTime": publish_time if publish_time else "",
-            "Keywords": keywords if keywords else "",
-            "Abstract": description if description else "",
-            "Content": content if content else "",
-            "topic": topic if topic else "",
+            "Title": title or "",
+            "Author": author or "",
+            "PublishTime": publish_time,
+            "Keywords": keywords or "",
+            "Abstract": description or "",
+            "Content": content or "",
+            "topic": topic or "",
             "tags": "",
             "pdf_file": pdf_file
         }
@@ -301,13 +304,13 @@ class SearchSpider(scrapy.Spider):
             "name": name,
             "experts_url": response.url,
             "img_url": response.urljoin(head_portrait) if head_portrait else "",
-            "abstract": brief_introd if brief_introd else "",
-            "research_field": research_field if research_field else "",
-            "job": job if job else "",
-            "education": education if education else "",
+            "abstract": brief_introd or "",
+            "research_field": research_field or "",
+            "job": job or "",
+            "education": education or "",
             "contact": [contact] if contact else "",
             "reward": "",
-            "active_media": active_media if active_media else "",
+            "active_media": active_media or "",
             "relevant": "",
             # "createTime": time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time())),
             # "pdf_file": pdf_file,
@@ -334,10 +337,14 @@ class SearchSpider(scrapy.Spider):
                     data = self._get_item_data(category, parsing_rule_dict, response)
                     data["DataSource"] = response.meta.get("data_source")
                     item = SearchItem(**data)
-                    yield item
+                    if item["PublishTime"]:
+                        yield item
+                    else:
+                        yield
                 elif category in parsing_rules and category == "experts":  # 专家
                     data = self._get_experts_data(parsing_rule_dict, response)
                     # contacts = data.pop("contact")
+
                     item = ExpertItem(**data)
                     # for key, value in contacts.items():
                     #     contact_data = {"url": response.url, "name": data.get("name"), "type": key, "contact": value}
