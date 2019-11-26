@@ -146,6 +146,7 @@ class SearchSpider(scrapy.Spider):
         keywords = ','.join(keywords)
         author = response.xpath(parsing_rule_dict.get("author")).extract()
         author = ','.join(author)
+
         pdf_urls = response.xpath(parsing_rule_dict.get("pdf_file")).extract()
         pdf_urls = [response.urljoin(pdf_url) for pdf_url in pdf_urls if re.search('pdf$', pdf_url)]
         pdf_file_dict = {'附件': pdf_urls}

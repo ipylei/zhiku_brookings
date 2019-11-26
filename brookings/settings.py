@@ -135,6 +135,7 @@ MYSQL_PASSWORD = '123456'
 # MQ_USERNAME = 'admin'
 # MQ_PASSWORD = '123456'
 # MQ_PORT = 5672
+
 MQ_NEWS_QUEUE = 'zk_news'  # 新闻队列
 MQ_EXPERT_QUEUE = 'zk_experts'  # 专家队列
 MQ_FILE_QUEUE = 'zk_file_task_queue'  # 附件队列

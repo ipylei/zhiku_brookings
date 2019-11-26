@@ -292,13 +292,13 @@ class ExpertsSpider(scrapy.Spider):
             pdf_file = ""
 
         data = {
-            "Title": title if title else "",
-            "Author": author if author else "",
-            "PublishTime": publish_time if publish_time else "",
-            "Keywords": keywords if keywords else "",
-            "Abstract": description if description else "",
-            "Content": content if content else "",
-            "topic": topic if topic else "",
+            "Title": title or "",
+            "Author": author or "",
+            "PublishTime": publish_time or "",
+            "Keywords": keywords or "",
+            "Abstract": description or "",
+            "Content": content or "",
+            "topic": topic or "",
             "tags": "",
             "pdf_file": pdf_file
         }

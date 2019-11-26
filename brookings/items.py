@@ -23,7 +23,6 @@ class SearchItem(scrapy.Item):
     site_name = scrapy.Field()
 
     pdf_file = scrapy.Field()
-
     # editor = scrapy.Field()  # 编辑者
     # top_img = scrapy.Field()  # 标题图片
 
